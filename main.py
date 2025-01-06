@@ -50,7 +50,7 @@ def desenhar_tela(tela, gerenciador, pontuacao, estado, fps_atual):
                   (conf.LARGURA_TELA // 2 - 150, conf.ALTURA_TELA // 2 + 10))
     pygame.display.flip()
 
-
+#
 def main():
     logging.basicConfig(level=logging.INFO)
     tela, clock = inicializar_jogo()
