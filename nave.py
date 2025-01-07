@@ -4,7 +4,6 @@ from tiro import Tiro
 import cores
 
 
-# Classe da Nave
 class Nave(pygame.sprite.Sprite):
     def __init__(self, gerenciador):
         super().__init__()
@@ -15,18 +14,12 @@ class Nave(pygame.sprite.Sprite):
         self.rect.bottom = conf.ALTURA_TELA - 10
         self.velocidade = 4
         self.gerenciador = gerenciador  # Referência ao GerenciadorObjetos
-
-    def processar_evento_teclado(self, evento):
-        """
-        Processa eventos relacionados às teclas pressionadas.
-        """
-        if evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_SPACE:
-                self.atirar()
+        self.tempo_recarga = 0  # Tempo para controlar a taxa de tiro
+        self.tempo_recarga_max = 20
 
     def update(self):
         """
-        Atualiza o movimento da nave com base nas teclas pressionadas.
+        Atualiza o movimento da nave e gerencia os tiros.
         """
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and self.rect.left > 0:
@@ -34,13 +27,22 @@ class Nave(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT] and self.rect.right < conf.LARGURA_TELA:
             self.rect.x += self.velocidade
 
+        # Atirar continuamente enquanto o SPACE está pressionado
+        if keys[pygame.K_SPACE]:
+            self.atirar()
+
+        # Atualiza o tempo de recarga
+        if self.tempo_recarga > 0:
+            self.tempo_recarga -= 1
+
     def atirar(self):
         """
-        Chamado quando o jogador pressiona espaço.
-        Gera tiros no gerenciador.
+        Gera tiros no gerenciador, com uma taxa de disparo controlada.
         """
-        qtd = 3  # Quantidade de tiros, melhor que seja impar
-        for i in range(qtd):
-            x_ajuste = i - (qtd / 2)
-            tiro = Tiro(self.rect.centerx + x_ajuste, self.rect.top)
-            self.gerenciador.adicionar_tiro(tiro)
+        if self.tempo_recarga == 0:  # Só atira se a recarga estiver zerada
+            qtd = 5  # Quantidade de tiros, melhor que seja impar
+            for i in range(qtd):
+                x_ajuste = 11 * (i - (qtd / 2))
+                tiro = Tiro(self.rect.centerx + x_ajuste, self.rect.top)
+                self.gerenciador.adicionar_tiro(tiro)
+            self.tempo_recarga = self.tempo_recarga_max  # Ajuste para definir a taxa de disparo

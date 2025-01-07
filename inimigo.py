@@ -9,7 +9,7 @@ import random
 class Inimigo(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((40, 30))
+        self.image = pygame.Surface((20, 20))
         self.image.fill(cores.VERMELHO)
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, conf.LARGURA_TELA - self.rect.width)
@@ -21,4 +21,4 @@ class Inimigo(pygame.sprite.Sprite):
         if self.rect.top > conf.ALTURA_TELA:
             self.rect.x = random.randint(0, conf.LARGURA_TELA - self.rect.width)
             self.rect.y = random.randint(-100, -40)
-            self.velocidade = random.randint(2, 6)
+            self.velocidade = random.randint(2, 8)

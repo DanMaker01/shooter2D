@@ -27,13 +27,16 @@ def reiniciar_jogo():
 def processar_eventos(eventos, jogador, estado, gerenciador, pontuacao):
     for evento in eventos:
         if evento.type == pygame.QUIT:
-            return False, estado, pontuacao
-        jogador.processar_evento_teclado(evento)
+            return False, estado, pontuacao, gerenciador, jogador
+
+        # jogador.processar_evento_teclado(evento)
+        
         if estado == "game_over" and evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_r:
-                gerenciador, jogador = reiniciar_jogo()
-                return True, "jogando", 0
-    return True, estado, pontuacao
+                novo_gerenciador, novo_jogador = reiniciar_jogo()
+                return True, "jogando", 0, novo_gerenciador, novo_jogador
+    return True, estado, pontuacao, gerenciador, jogador
+
 
 
 def desenhar_tela(tela, gerenciador, pontuacao, estado, fps_atual):
@@ -42,6 +45,8 @@ def desenhar_tela(tela, gerenciador, pontuacao, estado, fps_atual):
     fonte = pygame.font.SysFont("Arial", 24)
     tela.blit(fonte.render(f"Pontuação: {pontuacao}", True, cores.BRANCO), (10, 10))
     tela.blit(fonte.render(f"FPS: {fps_atual}", True, cores.BRANCO), (conf.LARGURA_TELA - 100, 10))
+    tela.blit(fonte.render(f"Projéteis: {len(gerenciador.tiros)}", True, cores.BRANCO), (10, 40))
+    
     if estado == "game_over":
         fonte_game_over = pygame.font.SysFont("Arial", 48)
         tela.blit(fonte_game_over.render("Game Over", True, cores.VERMELHO),
@@ -59,15 +64,18 @@ def main():
 
     while jogando:
         eventos = pygame.event.get()
-        jogando, estado, pontuacao = processar_eventos(eventos, jogador, estado, gerenciador, pontuacao)
+        jogando, estado, pontuacao, gerenciador, jogador = processar_eventos(eventos, jogador, estado, gerenciador, pontuacao)
+        
         if estado == "jogando":
             gerenciador.atualizar()
             jogador.update()
             estado, pontos = gerenciador.verificar_colisoes()
             pontuacao += pontos
+
         desenhar_tela(tela, gerenciador, pontuacao, estado, int(clock.get_fps()))
         clock.tick(conf.FPS)
     pygame.quit()
+
 
 
 if __name__ == "__main__":
