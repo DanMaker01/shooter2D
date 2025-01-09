@@ -1,14 +1,16 @@
 import pygame
 import config as conf
 from tiro import Tiro
-import cores
+#import cores
 
 
 class Nave(pygame.sprite.Sprite):
     def __init__(self, gerenciador):
         super().__init__()
-        self.image = pygame.Surface((50, 40))
-        self.image.fill(cores.AZUL)
+        # Carregar a imagem da nave
+        imagem_original = pygame.image.load("sprites/nave.png").convert_alpha()
+        self.image = pygame.transform.scale(imagem_original, (50, 40))  # Ajuste para o tamanho desejado
+        
         self.rect = self.image.get_rect()
         self.rect.centerx = conf.LARGURA_TELA // 2
         self.rect.bottom = conf.ALTURA_TELA - 10
