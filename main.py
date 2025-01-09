@@ -14,7 +14,7 @@ def inicializar_jogo():
     clock = pygame.time.Clock()
     return tela, clock
 
-#
+
 def reiniciar_jogo():
     gerenciador = GerenciadorObjetos()
     jogador = Nave(gerenciador)

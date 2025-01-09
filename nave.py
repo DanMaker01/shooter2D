@@ -9,7 +9,8 @@ class Nave(pygame.sprite.Sprite):
         super().__init__()
         # Carregar a imagem da nave
         imagem_original = pygame.image.load("sprites/nave.png").convert_alpha()
-        self.image = pygame.transform.scale(imagem_original, (50, 40))  # Ajuste para o tamanho desejado
+        # self.image = pygame.transform.scale(imagem_original, (64, 128))  # Ajuste para o tamanho desejado
+        self.image = imagem_original
         
         self.rect = self.image.get_rect()
         self.rect.centerx = conf.LARGURA_TELA // 2
