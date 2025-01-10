@@ -1,4 +1,4 @@
 # Configurações básicas
-LARGURA_TELA = 640
-ALTURA_TELA = 960
+LARGURA_TELA = 512
+ALTURA_TELA = 768
 FPS = 60
