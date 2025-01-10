@@ -43,9 +43,9 @@ def desenhar_tela(tela, gerenciador, pontuacao, estado, fps_atual):
     tela.fill(cores.PRETO)
     gerenciador.desenhar(tela)
     fonte = pygame.font.SysFont("Arial", 24)
-    tela.blit(fonte.render(f"Pontuação: {pontuacao}", True, cores.BRANCO), (10, 10))
-    tela.blit(fonte.render(f"FPS: {fps_atual}", True, cores.BRANCO), (conf.LARGURA_TELA - 100, 10))
-    tela.blit(fonte.render(f"Projéteis: {len(gerenciador.tiros)}", True, cores.BRANCO), (10, 40))
+    tela.blit(fonte.render(f"Pontuação: {pontuacao}", True, cores.VERMELHO), (10, 10))
+    tela.blit(fonte.render(f"FPS: {fps_atual}", True, cores.VERMELHO), (conf.LARGURA_TELA - 100, 10))
+    tela.blit(fonte.render(f"Projéteis: {len(gerenciador.tiros)}", True, cores.VERMELHO), (10, 40))
     
     if estado == "game_over":
         fonte_game_over = pygame.font.SysFont("Arial", 48)
