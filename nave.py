@@ -19,6 +19,7 @@ class Nave(pygame.sprite.Sprite):
         self.gerenciador = gerenciador  # Referência ao GerenciadorObjetos
         self.tempo_recarga = 0  # Tempo para controlar a taxa de tiro
         self.tempo_recarga_max = 20
+        self.foco = False
 
     def update(self):
         """
@@ -31,8 +32,12 @@ class Nave(pygame.sprite.Sprite):
             self.rect.x += self.velocidade
 
         # Atirar continuamente enquanto o SPACE está pressionado
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_z]:
             self.atirar()
+        if keys[pygame.K_x]:
+            self.focar()
+        else:
+            self.desfocar()
 
         # Atualiza o tempo de recarga
         if self.tempo_recarga > 0:
@@ -43,9 +48,32 @@ class Nave(pygame.sprite.Sprite):
         Gera tiros no gerenciador, com uma taxa de disparo controlada.
         """
         if self.tempo_recarga == 0:  # Só atira se a recarga estiver zerada
-            qtd = 5  # Quantidade de tiros, melhor que seja impar
-            for i in range(qtd):
-                x_ajuste = 11 * (i - (qtd / 2))
-                tiro = Tiro(self.rect.centerx + x_ajuste, self.rect.top)
-                self.gerenciador.adicionar_tiro(tiro)
-            self.tempo_recarga = self.tempo_recarga_max  # Ajuste para definir a taxa de disparo
+            #
+            if not self.foco:
+                for i in range(3):
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 20, 90+30*i)
+                    self.gerenciador.adicionar_tiro(tiro)
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 20, 90-30*i)
+                    self.gerenciador.adicionar_tiro(tiro)
+
+
+                self.tempo_recarga = 3*self.tempo_recarga_max  # Ajuste para definir a taxa de disparo
+            
+
+            else:
+                for i in range(3):
+
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 20, 90+1*i)
+                    self.gerenciador.adicionar_tiro(tiro)
+
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 20, 90-1*i)
+                    self.gerenciador.adicionar_tiro(tiro)
+
+                self.tempo_recarga = self.tempo_recarga_max  # Ajuste para definir a taxa de disparo
+            #
+
+    def focar(self):
+        self.foco = True
+
+    def desfocar(self):
+        self.foco = False
