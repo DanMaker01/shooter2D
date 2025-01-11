@@ -12,8 +12,12 @@ def inicializar_jogo():
     tela = pygame.display.set_mode((conf.LARGURA_TELA, conf.ALTURA_TELA))
     pygame.display.set_caption("Shooter Vertical")
     clock = pygame.time.Clock()
-    return tela, clock
 
+    # Carregando a imagem de fundo
+    fundo = pygame.image.load("sprites/galaxy.png").convert()  # Substitua pelo caminho correto
+    fundo = pygame.transform.scale(fundo, (conf.LARGURA_TELA, conf.ALTURA_TELA))
+    
+    return tela, clock, fundo
 
 def reiniciar_jogo():
     gerenciador = GerenciadorObjetos()
@@ -38,10 +42,10 @@ def processar_eventos(eventos, jogador, estado, gerenciador, pontuacao):
     return True, estado, pontuacao, gerenciador, jogador
 
 
-
-def desenhar_tela(tela, gerenciador, pontuacao, estado, fps_atual):
-    tela.fill(cores.PRETO)
+def desenhar_tela(tela, gerenciador, pontuacao, estado, fps_atual, fundo):
+    tela.blit(fundo, (0, 0))  # Desenhe o fundo primeiro
     gerenciador.desenhar(tela)
+    
     fonte = pygame.font.SysFont("Arial", 24)
     tela.blit(fonte.render(f"Pontuação: {pontuacao}", True, cores.VERMELHO), (10, 10))
     tela.blit(fonte.render(f"FPS: {fps_atual}", True, cores.VERMELHO), (conf.LARGURA_TELA - 100, 10))
@@ -55,10 +59,11 @@ def desenhar_tela(tela, gerenciador, pontuacao, estado, fps_atual):
                   (conf.LARGURA_TELA // 2 - 150, conf.ALTURA_TELA // 2 + 10))
     pygame.display.flip()
 
+
 #
 def main():
     logging.basicConfig(level=logging.INFO)
-    tela, clock = inicializar_jogo()
+    tela, clock, fundo = inicializar_jogo()  # Adicionado fundo
     gerenciador, jogador = reiniciar_jogo()
     jogando, estado, pontuacao = True, "jogando", 0
 
@@ -72,10 +77,9 @@ def main():
             estado, pontos = gerenciador.verificar_colisoes()
             pontuacao += pontos
 
-        desenhar_tela(tela, gerenciador, pontuacao, estado, int(clock.get_fps()))
+        desenhar_tela(tela, gerenciador, pontuacao, estado, int(clock.get_fps()), fundo)  # Passando fundo
         clock.tick(conf.FPS)
     pygame.quit()
-
 
 
 if __name__ == "__main__":
