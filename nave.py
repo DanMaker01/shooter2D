@@ -14,7 +14,7 @@ class Nave(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = conf.LARGURA_TELA // 2
         self.rect.bottom = conf.ALTURA_TELA - 10
-        self.velocidade = 4
+        self.velocidade = 3
         self.gerenciador = gerenciador  # Referência ao GerenciadorObjetos
         self.tempo_recarga = 0  # Tempo para controlar a taxa de tiro
         self.tempo_recarga_max = 20
@@ -27,18 +27,33 @@ class Nave(pygame.sprite.Sprite):
         Atualiza o movimento da nave e gerencia os tiros.
         """
         keys = pygame.key.get_pressed()
+        #prioridade 1 ----------------------------------------------------
         if keys[pygame.K_LEFT] and self.rect.left > 0:
-            self.rect.x -= self.velocidade
+            if self.focado:
+                self.rect.x -= self.velocidade * 0.5
+            else:
+                self.rect.x -= self.velocidade
         if keys[pygame.K_RIGHT] and self.rect.right < conf.LARGURA_TELA:
-            self.rect.x += self.velocidade
+            if self.focado:
+                self.rect.x += self.velocidade * 0.5
+            else:
+                self.rect.x += self.velocidade
 
         # Atirar continuamente enquanto o SPACE está pressionado
-        if keys[pygame.K_SPACE]:
-            self.bomba()
+        if keys[pygame.K_x] or keys[pygame.K_SPACE]:
+            if self.tempo_recarga_bomba == 0:
+                for vel in [4,6,8,10,12]:
+                    self.bomba(velocidade=vel)
 
+                # Define o cooldown da bomba
+                self.tempo_recarga_bomba = self.tempo_recarga_bomba_max
+            else:
+                pass
+            
         if keys[pygame.K_z]:
             self.atirar()
 
+        #prioridade 2 ----------------------------------------------------
         if keys[pygame.K_LSHIFT]:
             self.focar()
         else:
@@ -74,19 +89,14 @@ class Nave(pygame.sprite.Sprite):
 
                 self.tempo_recarga = self.tempo_recarga_max  # Ajuste para definir a taxa de disparo
 
-    def bomba(self):
+    def bomba(self, qtd=36, velocidade=10, fase=0):
         """
         Gera tiros em todas as direções (bomba), com cooldown.
         """
-        if self.tempo_recarga_bomba == 0:  # Só usa a bomba se o cooldown estiver zerado
-            qtd = 36
-            for i in range(qtd):
-                tiro = Tiro(self.rect.centerx, self.rect.top, 10, i * (360 / qtd))
-                self.gerenciador.adicionar_tiro(tiro)
-
-            # Define o cooldown da bomba
-            self.tempo_recarga_bomba = self.tempo_recarga_bomba_max
-
+        for i in range(qtd):
+            tiro = Tiro(self.rect.centerx, self.rect.top, velocidade, i * (360 / qtd) + fase)
+            self.gerenciador.adicionar_tiro(tiro)
+        
     def focar(self):
         self.focado = True
 

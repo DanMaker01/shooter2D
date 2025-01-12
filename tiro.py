@@ -13,7 +13,7 @@ class Tiro(pygame.sprite.Sprite):
         """
         super().__init__()
         # Criação do sprite do tiro
-        self.image = pygame.Surface((5, 5))  # Tamanho do tiro
+        self.image = pygame.Surface((10, 10))  # Tamanho do tiro
         self.image.fill(cores.BRANCO)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)  # Define a posição inicial
