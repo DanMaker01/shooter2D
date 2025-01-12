@@ -1,37 +1,46 @@
 import pygame
 import cores
+import math
 
-
-# Classe do Tiro
 class Tiro(pygame.sprite.Sprite):
-    def __init__(self, x, y, velocidade_magnitude, angulo):
+    def __init__(self, x, y, velocidade, angulo):
         """
         Inicializa o tiro.
-        :param x: Posição x inicial.
-        :param y: Posição y inicial.
-        :param velocidade_magnitude: Magnitude da velocidade (intensidade).
-        :param angulo: Ângulo em graus (direção do tiro).
+        :param x: Posição x inicial do tiro.
+        :param y: Posição y inicial do tiro.
+        :param velocidade: Velocidade escalar do tiro.
+        :param angulo: Direção do tiro em graus.
         """
         super().__init__()
-        self.image = pygame.Surface((5, 5))
+        # Criação do sprite do tiro
+        self.image = pygame.Surface((5, 5))  # Tamanho do tiro
         self.image.fill(cores.BRANCO)
         self.rect = self.image.get_rect()
-        self.rect.centerx = x
-        self.rect.bottom = y
+        self.rect.center = (x, y)  # Define a posição inicial
 
-        # Define a velocidade como um vetor 2D com base na magnitude e ângulo
-        self.velocidade = pygame.math.Vector2()
-        self.velocidade.from_polar((velocidade_magnitude, angulo))  # Vetor a partir da magnitude e do ângulo
+        # Vetor de posição
+        self.posicao = pygame.math.Vector2(x, y)
+        
+        # Vetor de velocidade
+        radiano = math.radians(angulo)
+        self.velocidade = pygame.math.Vector2(
+            velocidade * math.cos(radiano),
+            -velocidade * math.sin(radiano)  # Negativo para mover para cima
+        )
 
     def update(self):
         """
-        Atualiza a posição do tiro de acordo com sua velocidade.
+        Atualiza a posição do tiro com base em sua velocidade.
         """
-        # Move o tiro com base na velocidade
-        self.rect.x += self.velocidade.x
-        self.rect.y -= self.velocidade.y
+        # Atualiza a posição do tiro
+        self.posicao += self.velocidade
+
+        # Atualiza a posição do rect com base no vetor de posição
+        self.rect.center = (round(self.posicao.x), round(self.posicao.y))
 
         # Remove o tiro se sair da tela
-        if self.rect.bottom < 0 or self.rect.top > pygame.display.get_surface().get_height() \
-                or self.rect.left > pygame.display.get_surface().get_width() or self.rect.right < 0:
+        largura_tela = pygame.display.get_surface().get_width()
+        altura_tela = pygame.display.get_surface().get_height()
+        if (self.rect.right < 0 or self.rect.left > largura_tela or 
+            self.rect.bottom < 0 or self.rect.top > altura_tela):
             self.kill()

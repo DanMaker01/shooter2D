@@ -33,12 +33,19 @@ def processar_eventos(eventos, jogador, estado, gerenciador, pontuacao):
         if evento.type == pygame.QUIT:
             return False, estado, pontuacao, gerenciador, jogador
 
-        # jogador.processar_evento_teclado(evento)
-        
-        if estado == "game_over" and evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_r:
+        # Verifica as teclas de pausa
+        if evento.type == pygame.KEYDOWN:
+            if evento.key in [pygame.K_p, pygame.K_ESCAPE]:
+                if estado == "jogando":
+                    estado = "pausado"
+                elif estado == "pausado":
+                    estado = "jogando"
+
+            # Reiniciar o jogo no estado de "game_over"
+            if estado == "game_over" and evento.key == pygame.K_r:
                 novo_gerenciador, novo_jogador = reiniciar_jogo()
                 return True, "jogando", 0, novo_gerenciador, novo_jogador
+
     return True, estado, pontuacao, gerenciador, jogador
 
 
@@ -57,10 +64,15 @@ def desenhar_tela(tela, gerenciador, pontuacao, estado, fps_atual, fundo):
                   (conf.LARGURA_TELA // 2 - 150, conf.ALTURA_TELA // 2 - 50))
         tela.blit(fonte.render("Pressione R para reiniciar", True, cores.BRANCO),
                   (conf.LARGURA_TELA // 2 - 150, conf.ALTURA_TELA // 2 + 10))
+    elif estado == "pausado":
+        fonte_pausa = pygame.font.SysFont("Arial", 48)
+        tela.blit(fonte_pausa.render("Jogo Pausado", True, cores.AZUL),
+                  (conf.LARGURA_TELA // 2 - 150, conf.ALTURA_TELA // 2 - 50))
+        tela.blit(fonte.render("Pressione P ou ESC para continuar", True, cores.BRANCO),
+                  (conf.LARGURA_TELA // 2 - 200, conf.ALTURA_TELA // 2 + 10))
     pygame.display.flip()
 
 
-#
 def main():
     logging.basicConfig(level=logging.INFO)
     tela, clock, fundo = inicializar_jogo()  # Adicionado fundo
