@@ -62,9 +62,7 @@ def reiniciar_jogo():
         gerenciador_objetos.adicionar_inimigo(inimigo)
 
     return gerenciador_objetos, jogador
-
 class Fase(EstadoBase):
-
     def __init__(self, gerenciador):
         super().__init__(gerenciador)
         self.gerenciador_objetos, self.jogador = reiniciar_jogo()
@@ -79,8 +77,6 @@ class Fase(EstadoBase):
             if evento.type == pygame.KEYDOWN:
                 if evento.key in [pygame.K_p, pygame.K_ESCAPE]:
                     self.gerenciador.trocar_estado("pause")
-                # if evento.key == pygame.K_r:
-                #     self.gerenciador.trocar_estado("fase")
 
     def atualizar(self):
         self.gerenciador_objetos.atualizar()
@@ -93,35 +89,29 @@ class Fase(EstadoBase):
     def desenhar(self, tela):
         tela.blit(self.fundo, (0, 0))
         self.gerenciador_objetos.desenhar(tela)
+        
+        # Fonte para o texto
         fonte = pygame.font.SysFont("Arial", 24)
+
+        # Exibindo a pontuação
         tela.blit(fonte.render(f"Pontuação: {self.pontuacao}", True, cores.VERMELHO), (10, 10))
+
+        # Exibindo o FPS
+        fps = str(int(self.gerenciador.fps))  # Usa o FPS armazenado no gerenciador
+        tela.blit(fonte.render(f"FPS: {fps}", True, cores.VERMELHO), (10, 40))
+
+        # Exibindo o número de tiros
+        num_tiros = len(self.gerenciador_objetos.tiros)  # Número de tiros do jogador
+        tela.blit(fonte.render(f"Tiros: {num_tiros}", True, cores.VERMELHO), (10, 70))
+
+        # Exibindo o número de tiros dos inimigos
+        num_tiros_inimigos = len(self.gerenciador_objetos.tiros_inimigos)  # Número de tiros dos inimigos
+        tela.blit(fonte.render(f"Tiros Inimigos: {num_tiros_inimigos}", True, cores.VERMELHO), (10, 100))
+
+        # Atualizando a tela
         pygame.display.flip()
 
 
-class TelaPause(EstadoBase):
-    def __init__(self, gerenciador):
-        super().__init__(gerenciador)
-        self.fonte = pygame.font.SysFont("Arial", 48)
-
-    def processar_eventos(self, eventos):
-        for evento in eventos:
-            if evento.type == pygame.QUIT:
-                self.gerenciador.sair_jogo()
-            if evento.type == pygame.KEYDOWN:
-                if evento.key in [pygame.K_p, pygame.K_ESCAPE]:
-                    self.gerenciador.trocar_estado("fase")
-                if evento.key == pygame.K_r:
-                    self.gerenciador.trocar_estado("fase")
-
-    def desenhar(self, tela):
-        tela.fill(cores.PRETO)
-        texto_pausa = self.fonte.render("Jogo Pausado", True, cores.AZUL)
-        instrucao = pygame.font.SysFont("Arial", 24).render("Pressione P ou ESC para continuar", True, cores.BRANCO)
-        instrucao2 = pygame.font.SysFont("Arial", 24).render("Pressione R para reiniciar", True, cores.BRANCO)
-        tela.blit(texto_pausa, (conf.LARGURA_TELA // 2 - texto_pausa.get_width() // 2, conf.ALTURA_TELA // 2 - 50))
-        tela.blit(instrucao, (conf.LARGURA_TELA // 2 - instrucao.get_width() // 2, conf.ALTURA_TELA // 2 + 20))
-        tela.blit(instrucao2, (conf.LARGURA_TELA // 2 - instrucao.get_width() // 2, conf.ALTURA_TELA // 2 + 50))
-        pygame.display.flip()
 
 
 class TelaGameOver(EstadoBase):
@@ -145,22 +135,21 @@ class TelaGameOver(EstadoBase):
         tela.blit(instrucao, (conf.LARGURA_TELA // 2 - instrucao.get_width() // 2, conf.ALTURA_TELA // 2 + 20))
         pygame.display.flip()
 
-
 class GerenciadorEstados:
     def __init__(self):
         self.estados = {
             "menu": MenuInicial(self),
-            "fase": Fase(self),
-            "pause": TelaPause(self),
+            "fase": Fase(self),  # Esse estado já é criado na inicialização
             "game_over": TelaGameOver(self)
         }
         self.estado_atual = self.estados["menu"]
         self.rodando = True
+        self.fps = 0  # Adiciona um atributo para armazenar o FPS
 
     def trocar_estado(self, novo_estado):
         if novo_estado in self.estados:
-            if novo_estado == "fase":
-                # Recria o estado "fase" ao trocar para ele
+            if novo_estado == "fase" and self.estado_atual.__class__ != Fase:
+                # Recria o estado "fase" ao trocar para ele apenas se não for a fase atual
                 self.estados["fase"] = Fase(self)
             self.estado_atual = self.estados[novo_estado]
 
@@ -176,3 +165,6 @@ class GerenciadorEstados:
 
     def desenhar(self, tela):
         self.estado_atual.desenhar(tela)
+
+    def set_fps(self, fps):
+        self.fps = fps
