@@ -1,8 +1,7 @@
 import pygame
 import config as conf
 from tiro import Tiro
-# import cores
-
+from hitbox import Hitbox
 
 class Nave(pygame.sprite.Sprite):
     def __init__(self, gerenciador):
@@ -12,14 +11,31 @@ class Nave(pygame.sprite.Sprite):
         self.image = imagem_original
         
         self.rect = self.image.get_rect()
-        self.rect.centerx = conf.LARGURA_TELA // 2
-        self.rect.bottom = conf.ALTURA_TELA - 10
-        self.velocidade = 3
+        self.rect.x = conf.LARGURA_TELA // 2
+        self.rect.y = conf.ALTURA_TELA - 100
+        
+        # Variáveis de posição flutuante
+        self.x_pos = self.rect.x
+        self.y_pos = self.rect.y
+        
+        # Definir hitbox centralizada
+        proporcao = 0.50
+        self.hitbox = Hitbox(
+            self.rect.x + (self.rect.width / 2),
+            self.rect.y + (self.rect.height / 2),
+            self.rect.width * proporcao,
+            self.rect.height * proporcao)
+
+        self.velocidade = 2000
+        self.velocidade_focado = 500
         self.gerenciador = gerenciador  # Referência ao GerenciadorObjetos
+        
         self.tempo_recarga = 0  # Tempo para controlar a taxa de tiro
         self.tempo_recarga_max = 20
+        
         self.tempo_recarga_bomba = 0  # Tempo para controlar o cooldown da bomba
         self.tempo_recarga_bomba_max = 100  # Tempo máximo de cooldown para a bomba
+        
         self.focado = False
 
     def update(self):
@@ -27,24 +43,32 @@ class Nave(pygame.sprite.Sprite):
         Atualiza o movimento da nave e gerencia os tiros.
         """
         keys = pygame.key.get_pressed()
-        #prioridade 1 ----------------------------------------------------
         
-        # Movimento
-        if keys[pygame.K_LEFT] and self.rect.left > 0:
+        # MOVIMENTO (utilizando x_pos e y_pos para movimento suave)
+        if keys[pygame.K_LEFT] and self.x_pos > 0:
             if self.focado:
-                self.rect.x -= self.velocidade * 0.5
+                self.x_pos -= self.velocidade_focado / 1000
             else:
-                self.rect.x -= self.velocidade
-        if keys[pygame.K_RIGHT] and self.rect.right < conf.LARGURA_TELA:
-            if self.focado:
-                self.rect.x += self.velocidade * 0.5
-            else:
-                self.rect.x += self.velocidade
+                self.x_pos -= self.velocidade / 1000
 
-        # Bomba!!!
+        if keys[pygame.K_RIGHT] and self.x_pos < conf.LARGURA_TELA:
+            if self.focado:
+                self.x_pos += self.velocidade_focado / 1000
+            else:
+                self.x_pos += self.velocidade / 1000
+        
+        # Atualiza o rect.x com base na posição flutuante
+        self.rect.x = int(self.x_pos)
+        self.rect.y = int(self.y_pos)
+
+        # Atualiza a hitbox
+        self.hitbox.rect.x = self.rect.x + self.rect.width * 0.25
+        self.hitbox.rect.y = self.rect.y + self.rect.height * 0.25
+
+        # BOMBA!!! (controle de cooldown da bomba)
         if keys[pygame.K_x] or keys[pygame.K_SPACE]:
             if self.tempo_recarga_bomba == 0:
-                for vel in [4,6,8,10,12]:
+                for vel in [300, 400, 500, 580, 660]:  # Distâncias das bombas
                     self.bomba(velocidade=vel)
 
                 # Define o cooldown da bomba
@@ -52,11 +76,11 @@ class Nave(pygame.sprite.Sprite):
             else:
                 pass
             
-        # Atirar continuamente enquanto o SPACE está pressionado
+        # ATIRAR continuamente enquanto o SPACE está pressionado
         if keys[pygame.K_z]:
-            self.atirar()
+            self.atirar()  # Atirar
 
-        #prioridade 2 ----------------------------------------------------
+        # Focar/desfocar
         if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]:
             self.focar()
         else:
@@ -70,29 +94,33 @@ class Nave(pygame.sprite.Sprite):
         if self.tempo_recarga_bomba > 0:
             self.tempo_recarga_bomba -= 1
 
+    def desenhar_hitbox(self, tela):
+        """Desenha a hitbox com uma cor para visualização."""
+        pygame.draw.rect(tela, (255, 0, 0), self.hitbox.rect, 4)  # Desenha a hitbox em vermelho (2px de espessura)        
+
     def atirar(self):
         """
         Gera tiros no gerenciador, com uma taxa de disparo controlada.
         """
         if self.tempo_recarga == 0:  # Só atira se a recarga estiver zerada
-            if not self.focado:
+            if not self.focado:  # Focado
                 for i in range(3):
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 20, 90 + 30 * i)
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 2000, 90 + 30 * i)
                     self.gerenciador.adicionar_tiro(tiro)
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 20, 90 - 30 * i)
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 2000, 90 - 30 * i)
                     self.gerenciador.adicionar_tiro(tiro)
 
                 self.tempo_recarga = 3 * self.tempo_recarga_max  # Ajuste para definir a taxa de disparo
             else:
                 for i in range(3):
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 20, 90 + 1 * i)
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000, 90 + 1 * i)
                     self.gerenciador.adicionar_tiro(tiro)
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 20, 90 - 1 * i)
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000, 90 - 1 * i)
                     self.gerenciador.adicionar_tiro(tiro)
 
                 self.tempo_recarga = self.tempo_recarga_max  # Ajuste para definir a taxa de disparo
 
-    def bomba(self, qtd=36, velocidade=10, fase=0):
+    def bomba(self, qtd=36, velocidade=2000, fase=0):
         """
         Gera tiros em todas as direções (bomba), com cooldown.
         """

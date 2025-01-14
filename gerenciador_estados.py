@@ -46,6 +46,7 @@ class MenuInicial(EstadoBase):
 from nave import Nave
 from gerenciador import GerenciadorObjetos
 from inimigo import Inimigo
+from boss import Boss
 
 def reiniciar_jogo():
     """
@@ -53,13 +54,18 @@ def reiniciar_jogo():
     Retorna um gerenciador de objetos e o jogador.
     """
     gerenciador_objetos = GerenciadorObjetos()
+
     jogador = Nave(gerenciador_objetos)
     gerenciador_objetos.adicionar_jogador(jogador)
 
-    # Adiciona inimigos iniciais
-    for i in range(5):
-        inimigo = Inimigo()
-        gerenciador_objetos.adicionar_inimigo(inimigo)
+    boss = Boss(gerenciador_objetos)
+    gerenciador_objetos.adicionar_inimigo(boss)
+
+    # # Adiciona inimigos iniciais
+    # for i in range(5):
+    #     inimigo = Inimigo()
+    #     gerenciador_objetos.adicionar_inimigo(inimigo)
+
 
     return gerenciador_objetos, jogador
 class Fase(EstadoBase):
@@ -105,9 +111,15 @@ class Fase(EstadoBase):
         tela.blit(fonte.render(f"Tiros: {num_tiros}", True, cores.VERMELHO), (10, 70))
 
         # Exibindo o número de tiros dos inimigos
-        num_tiros_inimigos = len(self.gerenciador_objetos.tiros_inimigos)  # Número de tiros dos inimigos
-        tela.blit(fonte.render(f"Tiros Inimigos: {num_tiros_inimigos}", True, cores.VERMELHO), (10, 100))
+        num_inimigos = len(self.gerenciador_objetos.inimigos)  # Número de tiros dos inimigos
+        tela.blit(fonte.render(f"Inimigos: {num_inimigos}", True, cores.VERMELHO), (10, 100))
 
+        num_tiros_inimigos = len(self.gerenciador_objetos.tiros_inimigos)  # Número de tiros dos inimigos
+        tela.blit(fonte.render(f"Tiros Inimigos: {num_tiros_inimigos}", True, cores.VERMELHO), (10, 130))
+        
+        
+        
+        # 
         # Atualizando a tela
         pygame.display.flip()
 

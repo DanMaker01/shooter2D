@@ -48,11 +48,20 @@ class GerenciadorObjetos:
         """Desenha todos os objetos na tela."""
         self.todos_sprites.draw(tela)
 
+        if self.jogador:
+            self.jogador.desenhar_hitbox(tela)
+
     def verificar_colisoes(self):
-        """Verifica colisões entre tiros e inimigos, e nave com inimigos."""
+        """Verifica colisões entre hitboxes de tiros e inimigos, e do jogador com inimigos e tiros inimigos."""
         pontuacao = 0
 
-        # Colisões: Tiros x Inimigos
+        # Colisões: TirosInimigos x Jogador (usando hitboxes)
+        if self.jogador:
+            for tiro_inimigo in self.tiros_inimigos:
+                if self.jogador.hitbox.verificar_colisao(tiro_inimigo.hitbox):
+                    return "game_over", pontuacao
+
+        # Colisões: Tiros x Inimigos (usando hitboxes)
         colisoes = pygame.sprite.groupcollide(self.inimigos, self.tiros, True, True)
         for colisao in colisoes:
             pontuacao += 1
@@ -60,12 +69,16 @@ class GerenciadorObjetos:
             novo_inimigo = Inimigo()
             self.adicionar_inimigo(novo_inimigo)
 
-        # Colisões: Tiros dos inimigos x Jogador
-        if self.jogador and pygame.sprite.spritecollide(self.jogador, self.tiros_inimigos, True):
-            return "game_over", pontuacao
+        # Colisões: Tiros dos inimigos x Jogador (usando hitboxes)
+        if self.jogador:
+            for tiro_inimigo in self.tiros_inimigos:
+                if self.jogador.hitbox.verificar_colisao(tiro_inimigo.hitbox):
+                    return "game_over", pontuacao
 
-        # Colisões: Nave x Inimigos
-        if self.jogador and pygame.sprite.spritecollide(self.jogador, self.inimigos, False):
-            return "game_over", pontuacao
+        # Colisões: Nave x Inimigos (usando hitboxes)
+        if self.jogador:
+            for inimigo in self.inimigos:
+                if self.jogador.hitbox.verificar_colisao(inimigo.hitbox):
+                    return "game_over", pontuacao
 
         return "jogando", pontuacao
