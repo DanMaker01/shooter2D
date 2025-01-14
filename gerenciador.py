@@ -1,11 +1,12 @@
 import pygame
 from inimigo import Inimigo
-from tiro import Tiro
+from tiro import Tiro, TiroInimigo
 
 class GerenciadorObjetos:
     def __init__(self):
         self.todos_sprites = pygame.sprite.Group()  # Todos os objetos
-        self.tiros = pygame.sprite.Group()         # Apenas os projéteis
+        self.tiros = pygame.sprite.Group()         # Apenas os projéteis do jogador
+        self.tiros_inimigos = pygame.sprite.Group()  # Apenas os projéteis dos inimigos
         self.inimigos = pygame.sprite.Group()      # Apenas os inimigos
         self.jogador = None                        # Referência ao jogador
 
@@ -15,9 +16,14 @@ class GerenciadorObjetos:
         self.todos_sprites.add(jogador)
 
     def adicionar_tiro(self, tiro):
-        """Adiciona um projétil ao jogo."""
+        """Adiciona um projétil do jogador ao jogo."""
         self.tiros.add(tiro)
         self.todos_sprites.add(tiro)
+
+    def adicionar_tiro_inimigo(self, tiro_inimigo):
+        """Adiciona um projétil do inimigo ao jogo."""
+        self.tiros_inimigos.add(tiro_inimigo)
+        self.todos_sprites.add(tiro_inimigo)
 
     def adicionar_inimigo(self, inimigo):
         """Adiciona um inimigo ao jogo."""
@@ -29,6 +35,8 @@ class GerenciadorObjetos:
         self.todos_sprites.remove(objeto)
         if isinstance(objeto, Tiro):
             self.tiros.remove(objeto)
+        elif isinstance(objeto, TiroInimigo):
+            self.tiros_inimigos.remove(objeto)
         elif isinstance(objeto, Inimigo):
             self.inimigos.remove(objeto)
 
@@ -51,6 +59,10 @@ class GerenciadorObjetos:
             # Adiciona um novo inimigo (ou qualquer outra lógica de reposição)
             novo_inimigo = Inimigo()
             self.adicionar_inimigo(novo_inimigo)
+
+        # Colisões: Tiros dos inimigos x Jogador
+        if self.jogador and pygame.sprite.spritecollide(self.jogador, self.tiros_inimigos, True):
+            return "game_over", pontuacao
 
         # Colisões: Nave x Inimigos
         if self.jogador and pygame.sprite.spritecollide(self.jogador, self.inimigos, False):

@@ -28,6 +28,8 @@ class Nave(pygame.sprite.Sprite):
         """
         keys = pygame.key.get_pressed()
         #prioridade 1 ----------------------------------------------------
+        
+        # Movimento
         if keys[pygame.K_LEFT] and self.rect.left > 0:
             if self.focado:
                 self.rect.x -= self.velocidade * 0.5
@@ -39,7 +41,7 @@ class Nave(pygame.sprite.Sprite):
             else:
                 self.rect.x += self.velocidade
 
-        # Atirar continuamente enquanto o SPACE está pressionado
+        # Bomba!!!
         if keys[pygame.K_x] or keys[pygame.K_SPACE]:
             if self.tempo_recarga_bomba == 0:
                 for vel in [4,6,8,10,12]:
@@ -50,11 +52,12 @@ class Nave(pygame.sprite.Sprite):
             else:
                 pass
             
+        # Atirar continuamente enquanto o SPACE está pressionado
         if keys[pygame.K_z]:
             self.atirar()
 
         #prioridade 2 ----------------------------------------------------
-        if keys[pygame.K_LSHIFT]:
+        if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]:
             self.focar()
         else:
             self.desfocar()
