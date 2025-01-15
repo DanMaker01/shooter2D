@@ -2,7 +2,20 @@ import pygame
 import config as conf
 from gerenciador_estados import GerenciadorEstados
 
-
+# -------------------------------------------------------------------------
+# TO-DO
+# -------------------------------------------------------------------------
+#  - classe de hitbox
+#  - melhorar as mortes
+#  - corrigir bug com o boss
+#  - ao matar boss passa de fase
+#  - multifases
+# 
+# 
+# 
+# 
+# 
+# -------------------------------------------------------------------------
 
 
 def main():
