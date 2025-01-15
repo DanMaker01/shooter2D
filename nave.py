@@ -122,6 +122,7 @@ class Nave(pygame.sprite.Sprite):
                                 1000+2000*sin(math.radians(180/(ranges-1) * i)),    # velocidade
                                 180 - (180/(ranges-1)) * i+21)                         # angulo
                     self.gerenciador.adicionar_tiro(tiro)
+                    
                     tiro = Tiro(self.rect.centerx, self.rect.top, 
                                 1000+2000*sin(math.radians(180/(ranges-1) * i)),    # velocidade
                                 180 - (180/(ranges-1)) * i-21)                         # angulo

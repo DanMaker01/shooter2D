@@ -13,14 +13,14 @@ class Boss(Inimigo):
         self.image = pygame.image.load("sprites/boss.png").convert_alpha()
         # Posição inicial usando floats
         self.x = 0.5 * (conf.LARGURA_TELA - self.rect.width)
-        self.y = 0
+        self.y = 50
         
         # Atribuição inicial ao rect
         self.rect.x = round(self.x)
         self.rect.y = round(self.y)
 
         self.velocidade = 1
-        self.hp_max = 300
+        self.hp_max = 150
         self.hp = self.hp_max
 
         self.gerenciador = gerenciador
