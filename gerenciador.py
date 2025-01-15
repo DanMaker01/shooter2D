@@ -85,7 +85,8 @@ class GerenciadorObjetos:
         pontuacao = 0
         for tiro, inimigo in colisoes:
             tiro = self.remover_objeto(tiro)
-            if isinstance(inimigo, Boss):
+            # se for um BOSS
+            if isinstance(inimigo, Boss): # É um BOSS!!!!
                 print("boss foi atingido!!")
                 inimigo.dano()
                 if inimigo.hp <= 0:
@@ -94,7 +95,9 @@ class GerenciadorObjetos:
                     print("boss morreu!!")
                     for tiro in self.tiros_inimigos:
                         self.remover_objeto(tiro)
-                        
+                    #remover todos os inimigos também
+                    for inimigo in self.inimigos:
+                        self.remover_objeto(inimigo)
                     # print(f"HP: {inimigo.hp}/ {inimigo.hp_max}")
 
                 # Caso contrário, o boss segue vivo
@@ -108,6 +111,7 @@ class GerenciadorObjetos:
                 self.remover_objeto(inimigo)
                 novo_inimigo = Inimigo()
                 self.adicionar_inimigo(novo_inimigo)
+                break
 
         return "jogando", pontuacao
 

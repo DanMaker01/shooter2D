@@ -2,6 +2,11 @@ import pygame
 import config as conf
 import cores
 
+from nave import Nave
+from gerenciador import GerenciadorObjetos
+from inimigo import Inimigo
+from boss import Boss
+
 class EstadoBase: #classe abstrata
     def __init__(self, gerenciador):
         self.gerenciador = gerenciador
@@ -43,10 +48,6 @@ class MenuInicial(EstadoBase):
         pygame.display.flip()
 
 
-from nave import Nave
-from gerenciador import GerenciadorObjetos
-from inimigo import Inimigo
-from boss import Boss
 
 def reiniciar_jogo():
     """
@@ -62,9 +63,9 @@ def reiniciar_jogo():
     gerenciador_objetos.adicionar_inimigo(boss)
 
     # Adiciona inimigos iniciais
-    # for i in range(5):
-    #     inimigo = Inimigo()
-    #     gerenciador_objetos.adicionar_inimigo(inimigo)
+    for i in range(3):
+        inimigo = Inimigo()
+        gerenciador_objetos.adicionar_inimigo(inimigo)
 
 
     return gerenciador_objetos, jogador
@@ -121,16 +122,35 @@ class Fase(EstadoBase):
         
         #exibindo a vida do boss
         if len(self.gerenciador_objetos.inimigos) > 0:
-            inimigo = self.gerenciador_objetos.inimigos.sprites()[0]
-            vida_boss = inimigo.hp
-            vida_boss_max = inimigo.hp_max
-            tela.blit(fonte.render(f"Vida Boss: {vida_boss}/{vida_boss_max}", True, cores.VERMELHO), (10, 160))
+            #verifica se o tipo é Boss ou Inimigo
+            if isinstance(self.gerenciador_objetos.inimigos.sprites()[0], Boss):
+                inimigo = self.gerenciador_objetos.inimigos.sprites()[0]
+                vida_boss = inimigo.hp
+                vida_boss_max = inimigo.hp_max
+                tela.blit(fonte.render(f"Vida Boss: {vida_boss}/{vida_boss_max}", True, cores.VERMELHO), (10, 160))
+                pass
+            else:
+                
+                # inimigo = self.gerenciador_objetos.inimigos.sprites()[0]
+                # vida_boss = inimigo.hp
+                # vida_boss_max = inimigo.hp_max
+                # tela.blit(fonte.render(f"Vida Boss: {vida_boss}/{vida_boss_max}", True, cores.VERMELHO), (10, 160))
+                pass
             pass
         
         # Atualizando a tela
         pygame.display.flip()
 
-
+class Fase2(EstadoBase):
+    def __init__(self, gerenciador):
+        super().__init__(gerenciador)
+        pass
+    def processar_eventos(self, eventos):
+        pass
+    def atualizar(self):
+        pass
+    def desenhar(self, tela):
+        pass
 
 
 class TelaGameOver(EstadoBase):
@@ -171,8 +191,11 @@ class GerenciadorEstados:
             if novo_estado == "fase" :
                 # Recria o estado "fase" ao trocar para ele apenas se não for a fase atual
                 self.estados["fase"] = Fase(self)
-            self.estado_atual = self.estados[novo_estado]
+            else:
+                pass
 
+            self.estado_atual = self.estados[novo_estado]
+            pass
 
     def sair_jogo(self):
         self.rodando = False

@@ -8,6 +8,9 @@ from hitbox import Hitbox
 class Boss(Inimigo):
     def __init__(self, gerenciador):
         super().__init__()
+        
+        # Carrega a imagem de Boss
+        self.image = pygame.image.load("sprites/inimigo.png").convert_alpha()
         # Posição inicial usando floats
         self.x = 0.5 * (conf.LARGURA_TELA - self.rect.width)
         self.y = 0
@@ -17,7 +20,7 @@ class Boss(Inimigo):
         self.rect.y = round(self.y)
 
         self.velocidade = 1
-        self.hp_max = 300
+        self.hp_max = 200
         self.hp = self.hp_max
 
         self.gerenciador = gerenciador
