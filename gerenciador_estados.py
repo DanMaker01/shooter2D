@@ -7,6 +7,7 @@ from gerenciador import GerenciadorObjetos
 from inimigo import Inimigo
 from boss import Boss
 
+# ---------------------------------------------------------------------------------------------------------
 class EstadoBase: #classe abstrata
     def __init__(self, gerenciador):
         self.gerenciador = gerenciador
@@ -19,7 +20,7 @@ class EstadoBase: #classe abstrata
 
     def desenhar(self, tela):
         pass
-
+# ---------------------------------------------------------------------------------------------------------
 
 class MenuInicial(EstadoBase):
     def __init__(self, gerenciador):
@@ -49,8 +50,9 @@ class MenuInicial(EstadoBase):
         pygame.display.flip()
 
 
+# ---------------------------------------------------------------------------------------------------------
 
-class Fase(EstadoBase):
+class Fase1(EstadoBase):
     def __init__(self, gerenciador):
         super().__init__(gerenciador)
         self.gerenciador_objetos, self.jogador = self.reiniciar_jogo()
@@ -145,6 +147,7 @@ class Fase(EstadoBase):
         
         # Atualizando a tela
         pygame.display.flip()
+# ---------------------------------------------------------------------------------------------------------
 
 class Fase2(EstadoBase):
     def __init__(self, gerenciador):
@@ -169,7 +172,7 @@ class Fase2(EstadoBase):
         # gerenciador_objetos.adicionar_inimigo(boss)
 
         # Adiciona inimigos iniciais
-        for i in range(15):
+        for i in range(10):
             inimigo = Inimigo()
             gerenciador_objetos.adicionar_inimigo(inimigo)
 
@@ -241,6 +244,7 @@ class Fase2(EstadoBase):
         # Atualizando a tela
         pygame.display.flip()
 
+# ---------------------------------------------------------------------------------------------------------
 class TelaGameOver(EstadoBase):
     def __init__(self, gerenciador):
         super().__init__(gerenciador)
@@ -262,11 +266,12 @@ class TelaGameOver(EstadoBase):
         tela.blit(instrucao, (conf.LARGURA_TELA // 2 - instrucao.get_width() // 2, conf.ALTURA_TELA // 2 + 20))
         pygame.display.flip()
 
+
 class GerenciadorEstados:
     def __init__(self):
         self.estados = {
             "menu": MenuInicial(self),
-            "fase1": Fase(self),  # Esse estado já é criado na inicialização
+            "fase1": Fase1(self),  # Esse estado já é criado na inicialização
             "fase2": Fase2(self),  # Esse estado já é criado na inicialização
             "game_over": TelaGameOver(self)
         }
@@ -279,7 +284,7 @@ class GerenciadorEstados:
             print("Tentando trocar para o estado:", novo_estado)
             if novo_estado == "fase1" :
                 # Recria o estado "fase" ao trocar para ele apenas se não for a fase atual
-                self.estados["fase1"] = Fase(self)
+                self.estados["fase1"] = Fase1(self)
             elif novo_estado == "fase2":
                 # Recria o estado "fase" ao trocar para ele apenas se não for a fase atual
                 self.estados["fase2"] = Fase2(self)

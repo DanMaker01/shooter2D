@@ -18,28 +18,37 @@ class Inimigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, conf.LARGURA_TELA - self.rect.width)
         self.rect.y = random.randint(-100, -40)
+
         self.hitbox = Hitbox(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
         # print(self.hitbox.rect.x, self.hitbox.rect.y, self.hitbox.rect.width, self.hitbox.rect.height)
-
+        
+        # Velocidade
         self.velocidade = random.randint(2, 6)
         # hp inimigo
         self.hp = 1
+
+        # Variáveis de posiçãofloat
+        self.x_pos = self.rect.x
+        self.y_pos = self.rect.y
 
     def update(self):
         """
         Atualiza a posição do inimigo e redefine-o quando sai da tela.
         """
-        self.rect.y += self.velocidade
+        self.y_pos += self.velocidade
 
         if self.rect.top > conf.ALTURA_TELA:
             # Reposiciona o inimigo acima da tela
-            self.rect.x = random.randint(0, conf.LARGURA_TELA - self.rect.width)
-            self.rect.y = random.randint(-100, -40)
+            self.x_pos = random.randint(0, conf.LARGURA_TELA - self.rect.width)
+            self.y_pos  = random.randint(-100, -40)
             self.velocidade = random.randint(2, 8)
 
 
-        self.hitbox.rect.x = self.rect.x
-        self.hitbox.rect.y = self.rect.y
+        self.rect.x = int(self.x_pos)
+        self.rect.y = int(self.y_pos)
+
+        self.hitbox.rect.x = self.rect.x 
+        self.hitbox.rect.y = self.rect.y 
         
 # IMPLEMENTAR @@@@
     # def atirar(self):

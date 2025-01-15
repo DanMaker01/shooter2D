@@ -41,7 +41,7 @@ class Nave(pygame.sprite.Sprite):
         self.tempo_recarga_max = 25
         
         self.tempo_recarga_bomba = 0  # Tempo para controlar o cooldown da bomba
-        self.tempo_recarga_bomba_max = 100  # Tempo máximo de cooldown para a bomba
+        self.tempo_recarga_bomba_max = 1000  # Tempo máximo de cooldown para a bomba
         
         self.focado = False
         pass
