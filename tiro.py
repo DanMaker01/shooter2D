@@ -37,9 +37,6 @@ class Tiro(pygame.sprite.Sprite):
         # Atualiza a posição do tiro
         self.posicao += self.velocidade/100
         
-        self.hitbox.rect.x = self.rect.x
-        self.hitbox.rect.y = self.rect.y
-        
         # Atualiza a posição do rect com base no vetor de posição
         self.rect.center = (round(self.posicao.x), round(self.posicao.y))
 
@@ -49,6 +46,9 @@ class Tiro(pygame.sprite.Sprite):
         if (self.rect.right < 0 or self.rect.left > largura_tela or 
             self.rect.bottom < 0 or self.rect.top > altura_tela):
             self.kill()
+        
+        self.hitbox.rect.x = self.rect.x
+        self.hitbox.rect.y = self.rect.y
 
 
 
@@ -88,8 +88,6 @@ class TiroInimigo(pygame.sprite.Sprite):
         # Atualiza a posição do tiro
         self.posicao += self.velocidade/100
 
-        self.hitbox.rect.x = self.rect.x
-        self.hitbox.rect.y = self.rect.y
 
         # Atualiza a posição do rect com base no vetor de posição
         self.rect.center = (round(self.posicao.x), round(self.posicao.y))
@@ -100,3 +98,6 @@ class TiroInimigo(pygame.sprite.Sprite):
         if (self.rect.right < 0 or self.rect.left > largura_tela or 
             self.rect.bottom < 0 or self.rect.top > altura_tela):
             self.kill()
+
+        self.hitbox.rect.x = self.rect.x
+        self.hitbox.rect.y = self.rect.y

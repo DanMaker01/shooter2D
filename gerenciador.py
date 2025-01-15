@@ -1,6 +1,7 @@
 import pygame
 from inimigo import Inimigo
 from tiro import Tiro, TiroInimigo
+from boss import Boss
 
 class GerenciadorObjetos:
     def __init__(self):
@@ -55,30 +56,73 @@ class GerenciadorObjetos:
         """Verifica colisões entre hitboxes de tiros e inimigos, e do jogador com inimigos e tiros inimigos."""
         pontuacao = 0
 
-        # Colisões: TirosInimigos x Jogador (usando hitboxes)
-        if self.jogador:
-            for tiro_inimigo in self.tiros_inimigos:
-                if self.jogador.hitbox.verificar_colisao(tiro_inimigo.hitbox):
-                    return "game_over", pontuacao
-
         # Colisões: Tiros x Inimigos (usando hitboxes)
-        colisoes = pygame.sprite.groupcollide(self.inimigos, self.tiros, True, True)
-        for colisao in colisoes:
-            pontuacao += 1
-            # Adiciona um novo inimigo (ou qualquer outra lógica de reposição)
-            novo_inimigo = Inimigo()
-            self.adicionar_inimigo(novo_inimigo)
+        status, pontos = self.verificar_colisao_tiros_inimigos()
+        if status == "game_over":
+            return status, pontos
+        pontuacao += pontos
 
-        # Colisões: Tiros dos inimigos x Jogador (usando hitboxes)
+        # Colisões: Tiros dos inimigos x Jogador
+        status, pontos = self.verificar_colisao_jogador_com_tiros_inimigos()
+        if status == "game_over":
+            return status, pontos
+
+        # Colisões: Nave x Inimigos
+        status, pontos = self.verificar_colisao_jogador_com_inimigos()
+        if status == "game_over":
+            return status, pontos
+
+        return "jogando", pontuacao
+
+    def verificar_colisao_tiros_inimigos(self):
+        """Verifica colisões de tiros do jogador com inimigos e retorna a pontuação e status do jogo."""
+        colisoes = []
+        for tiro in self.tiros:
+            for inimigo in self.inimigos:
+                if tiro.hitbox.verificar_colisao(inimigo.hitbox):
+                    colisoes.append((tiro, inimigo))
+
+        pontuacao = 0
+        for tiro, inimigo in colisoes:
+            tiro = self.remover_objeto(tiro)
+            if isinstance(inimigo, Boss):
+                print("boss foi atingido!!")
+                inimigo.dano()
+                if inimigo.hp <= 0:
+                    self.remover_objeto(inimigo)
+                    pontuacao += 100
+                    print("boss morreu!!")
+                    for tiro in self.tiros_inimigos:
+                        self.remover_objeto(tiro)
+                        
+                    # print(f"HP: {inimigo.hp}/ {inimigo.hp_max}")
+
+                # Caso contrário, o boss segue vivo
+                else:
+                    print("boss continua vivo.") 
+                    # print(f"HP: {inimigo.hp}/ {inimigo.hp_max}")
+
+            else:  # Inimigo normal
+                pontuacao += 1
+                self.remover_objeto(tiro)
+                self.remover_objeto(inimigo)
+                novo_inimigo = Inimigo()
+                self.adicionar_inimigo(novo_inimigo)
+
+        return "jogando", pontuacao
+
+    def verificar_colisao_jogador_com_tiros_inimigos(self):
+        """Verifica colisões do jogador com tiros dos inimigos."""
         if self.jogador:
             for tiro_inimigo in self.tiros_inimigos:
                 if self.jogador.hitbox.verificar_colisao(tiro_inimigo.hitbox):
-                    return "game_over", pontuacao
+                    return "game_over", 0
+        return "jogando", 0
 
-        # Colisões: Nave x Inimigos (usando hitboxes)
+    def verificar_colisao_jogador_com_inimigos(self):
+        """Verifica colisões do jogador com inimigos."""
         if self.jogador:
             for inimigo in self.inimigos:
                 if self.jogador.hitbox.verificar_colisao(inimigo.hitbox):
-                    return "game_over", pontuacao
-
-        return "jogando", pontuacao
+                    return "game_over", 0
+        return "jogando", 0

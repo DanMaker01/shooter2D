@@ -1,10 +1,5 @@
 import pygame
 import config as conf
-# import cores
-
-from nave import Nave
-from gerenciador import GerenciadorObjetos
-from inimigo import Inimigo
 from gerenciador_estados import GerenciadorEstados
 
 

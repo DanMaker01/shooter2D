@@ -61,7 +61,7 @@ def reiniciar_jogo():
     boss = Boss(gerenciador_objetos)
     gerenciador_objetos.adicionar_inimigo(boss)
 
-    # # Adiciona inimigos iniciais
+    # Adiciona inimigos iniciais
     # for i in range(5):
     #     inimigo = Inimigo()
     #     gerenciador_objetos.adicionar_inimigo(inimigo)
@@ -93,9 +93,12 @@ class Fase(EstadoBase):
             self.gerenciador.trocar_estado("game_over")
 
     def desenhar(self, tela):
+        #fundo branco
         tela.blit(self.fundo, (0, 0))
+        #objetos
         self.gerenciador_objetos.desenhar(tela)
         
+        #desenhar HUD
         # Fonte para o texto
         fonte = pygame.font.SysFont("Arial", 24)
 
@@ -117,9 +120,14 @@ class Fase(EstadoBase):
         num_tiros_inimigos = len(self.gerenciador_objetos.tiros_inimigos)  # Número de tiros dos inimigos
         tela.blit(fonte.render(f"Tiros Inimigos: {num_tiros_inimigos}", True, cores.VERMELHO), (10, 130))
         
+        #exibindo a vida do boss
+        if len(self.gerenciador_objetos.inimigos) > 0:
+            
+            inimigo = self.gerenciador_objetos.inimigos.sprites()[0]
+            vida_boss = inimigo.hp
+            tela.blit(fonte.render(f"Vida Boss: {vida_boss}", True, cores.VERMELHO), (10, 160))
+            pass
         
-        
-        # 
         # Atualizando a tela
         pygame.display.flip()
 

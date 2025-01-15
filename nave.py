@@ -42,6 +42,7 @@ class Nave(pygame.sprite.Sprite):
         """
         Atualiza o movimento da nave e gerencia os tiros.
         """
+        # super().update()
         keys = pygame.key.get_pressed()
         
         # MOVIMENTO (utilizando x_pos e y_pos para movimento suave)
@@ -104,18 +105,16 @@ class Nave(pygame.sprite.Sprite):
         """
         if self.tempo_recarga == 0:  # Só atira se a recarga estiver zerada
             if not self.focado:  # Focado
-                for i in range(3):
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 2000, 90 + 30 * i)
+                for i in range(5):
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 2000, 180 - 45 * i)
                     self.gerenciador.adicionar_tiro(tiro)
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 2000, 90 - 30 * i)
-                    self.gerenciador.adicionar_tiro(tiro)
-
+                    
                 self.tempo_recarga = 3 * self.tempo_recarga_max  # Ajuste para definir a taxa de disparo
             else:
-                for i in range(3):
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000, 90 + 1 * i)
+                for i in range(2):
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000, 90 + 2 * i)
                     self.gerenciador.adicionar_tiro(tiro)
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000, 90 - 1 * i)
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000, 90 - 2 * i)
                     self.gerenciador.adicionar_tiro(tiro)
 
                 self.tempo_recarga = self.tempo_recarga_max  # Ajuste para definir a taxa de disparo
