@@ -38,7 +38,7 @@ class Nave(pygame.sprite.Sprite):
         
         # Controle de tiros ------------------------------------------------
         self.tempo_recarga = 0  # Tempo para controlar a taxa de tiro
-        self.tempo_recarga_max = 20
+        self.tempo_recarga_max = 25
         
         self.tempo_recarga_bomba = 0  # Tempo para controlar o cooldown da bomba
         self.tempo_recarga_bomba_max = 100  # Tempo máximo de cooldown para a bomba

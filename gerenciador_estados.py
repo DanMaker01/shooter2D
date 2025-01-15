@@ -31,7 +31,8 @@ class MenuInicial(EstadoBase):
             if evento.type == pygame.QUIT:
                 self.gerenciador.sair_jogo()
             if evento.type == pygame.KEYDOWN and evento.key == pygame.K_RETURN:
-                self.gerenciador.trocar_estado("fase")
+                self.gerenciador.trocar_estado("fase1")
+                # self.gerenciador.trocar_estado("fase2")
 
     def desenhar(self, tela):
         tela.fill(cores.PRETO)
@@ -49,34 +50,36 @@ class MenuInicial(EstadoBase):
 
 
 
-def reiniciar_jogo():
-    """
-    Reinicia o estado do jogo com os objetos necessários.
-    Retorna um gerenciador de objetos e o jogador.
-    """
-    gerenciador_objetos = GerenciadorObjetos()
-
-    jogador = Nave(gerenciador_objetos)
-    gerenciador_objetos.adicionar_jogador(jogador)
-
-    boss = Boss(gerenciador_objetos)
-    gerenciador_objetos.adicionar_inimigo(boss)
-
-    # Adiciona inimigos iniciais
-    for i in range(3):
-        inimigo = Inimigo()
-        gerenciador_objetos.adicionar_inimigo(inimigo)
-
-
-    return gerenciador_objetos, jogador
 class Fase(EstadoBase):
     def __init__(self, gerenciador):
         super().__init__(gerenciador)
-        self.gerenciador_objetos, self.jogador = reiniciar_jogo()
+        self.gerenciador_objetos, self.jogador = self.reiniciar_jogo()
         self.pontuacao = 0
         self.fundo = pygame.image.load("sprites/galaxy.png").convert()
         self.fundo = pygame.transform.scale(self.fundo, (conf.LARGURA_TELA, conf.ALTURA_TELA))
 
+        
+    def reiniciar_jogo(self):
+        """
+        Reinicia o estado do jogo com os objetos necessários.
+        Retorna um gerenciador de objetos e o jogador.
+        """
+        gerenciador_objetos = GerenciadorObjetos()
+
+        jogador = Nave(gerenciador_objetos)
+        gerenciador_objetos.adicionar_jogador(jogador)
+
+        boss = Boss(gerenciador_objetos)
+        gerenciador_objetos.adicionar_inimigo(boss)
+
+        # Adiciona inimigos iniciais
+        for i in range(3):
+            inimigo = Inimigo()
+            gerenciador_objetos.adicionar_inimigo(inimigo)
+
+
+        return gerenciador_objetos, jogador
+    
     def processar_eventos(self, eventos):
         for evento in eventos:
             if evento.type == pygame.QUIT:
@@ -85,7 +88,7 @@ class Fase(EstadoBase):
                 if evento.key in [pygame.K_p, pygame.K_ESCAPE]:
                     self.gerenciador.trocar_estado("pause")
                 if evento.key == pygame.K_r:
-                    self.gerenciador.trocar_estado("fase")
+                    self.gerenciador.trocar_estado("fase1")
                 
 
     def atualizar(self):
@@ -93,6 +96,8 @@ class Fase(EstadoBase):
         self.jogador.update()
         estado, pontos = self.gerenciador_objetos.verificar_colisoes()
         self.pontuacao += pontos
+        if estado == "fase2":
+            self.gerenciador.trocar_estado("fase2")
         if estado == "game_over":
             self.gerenciador.trocar_estado("game_over")
 
@@ -143,15 +148,98 @@ class Fase(EstadoBase):
 
 class Fase2(EstadoBase):
     def __init__(self, gerenciador):
+        print("iniciou fase2")
         super().__init__(gerenciador)
-        pass
-    def processar_eventos(self, eventos):
-        pass
-    def atualizar(self):
-        pass
-    def desenhar(self, tela):
-        pass
+        self.gerenciador_objetos, self.jogador = self.reiniciar_jogo()
+        self.pontuacao = 0
+        self.fundo = pygame.image.load("sprites/galaxy.png").convert()
+        self.fundo = pygame.transform.scale(self.fundo, (conf.LARGURA_TELA, conf.ALTURA_TELA))
 
+    def reiniciar_jogo(self):
+        """
+        Reinicia o estado do jogo com os objetos necessários.
+        Retorna um gerenciador de objetos e o jogador.
+        """
+        gerenciador_objetos = GerenciadorObjetos()
+
+        jogador = Nave(gerenciador_objetos)
+        gerenciador_objetos.adicionar_jogador(jogador)
+
+        # boss = Boss(gerenciador_objetos)
+        # gerenciador_objetos.adicionar_inimigo(boss)
+
+        # Adiciona inimigos iniciais
+        for i in range(15):
+            inimigo = Inimigo()
+            gerenciador_objetos.adicionar_inimigo(inimigo)
+
+
+        return gerenciador_objetos, jogador
+
+    def processar_eventos(self, eventos):
+
+        for evento in eventos:
+            if evento.type == pygame.QUIT:
+                self.gerenciador.sair_jogo()
+            if evento.type == pygame.KEYDOWN:
+                if evento.key in [pygame.K_p, pygame.K_ESCAPE]:
+                    self.gerenciador.trocar_estado("pause")
+                if evento.key == pygame.K_r:
+                    self.gerenciador.trocar_estado("fase1")
+                
+
+    def atualizar(self):
+        self.gerenciador_objetos.atualizar()
+        self.jogador.update()
+        estado, pontos = self.gerenciador_objetos.verificar_colisoes()
+        self.pontuacao += pontos
+        if estado == "game_over":
+            self.gerenciador.trocar_estado("game_over")
+
+    def desenhar(self, tela):
+        #fundo branco
+        tela.blit(self.fundo, (0, 0))
+        #objetos
+        self.gerenciador_objetos.desenhar(tela)
+        
+        #desenhar HUD
+        # Fonte para o texto
+        fonte = pygame.font.SysFont("Arial", 24)
+        # Exibindo a pontuação
+        tela.blit(fonte.render(f"Pontuação: {self.pontuacao}", True, cores.VERMELHO), (10, 10))
+        # Exibindo o FPS
+        fps = str(int(self.gerenciador.fps))  # Usa o FPS armazenado no gerenciador
+        tela.blit(fonte.render(f"FPS: {fps}", True, cores.VERMELHO), (10, 40))
+        # Exibindo o número de tiros
+        num_tiros = len(self.gerenciador_objetos.tiros)  # Número de tiros do jogador
+        tela.blit(fonte.render(f"Tiros: {num_tiros}", True, cores.VERMELHO), (10, 70))
+        # Exibindo o número de tiros dos inimigos
+        num_inimigos = len(self.gerenciador_objetos.inimigos)  # Número de tiros dos inimigos
+        tela.blit(fonte.render(f"Inimigos: {num_inimigos}", True, cores.VERMELHO), (10, 100))
+        # Exibindo o número de tiros dos inimigos
+        num_tiros_inimigos = len(self.gerenciador_objetos.tiros_inimigos)  # Número de tiros dos inimigos
+        tela.blit(fonte.render(f"Tiros Inimigos: {num_tiros_inimigos}", True, cores.VERMELHO), (10, 130))
+        
+        # #exibindo a vida do boss
+        # if len(self.gerenciador_objetos.inimigos) > 0:
+        #     #verifica se o tipo é Boss ou Inimigo
+        #     if isinstance(self.gerenciador_objetos.inimigos.sprites()[0], Boss):
+        #         inimigo = self.gerenciador_objetos.inimigos.sprites()[0]
+        #         vida_boss = inimigo.hp
+        #         vida_boss_max = inimigo.hp_max
+        #         tela.blit(fonte.render(f"Vida Boss: {vida_boss}/{vida_boss_max}", True, cores.VERMELHO), (10, 160))
+        #         pass
+        #     else:
+                
+        #         # inimigo = self.gerenciador_objetos.inimigos.sprites()[0]
+        #         # vida_boss = inimigo.hp
+        #         # vida_boss_max = inimigo.hp_max
+        #         # tela.blit(fonte.render(f"Vida Boss: {vida_boss}/{vida_boss_max}", True, cores.VERMELHO), (10, 160))
+        #         pass
+        #     pass
+        
+        # Atualizando a tela
+        pygame.display.flip()
 
 class TelaGameOver(EstadoBase):
     def __init__(self, gerenciador):
@@ -164,7 +252,7 @@ class TelaGameOver(EstadoBase):
                 self.gerenciador.sair_jogo()
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_r:
-                    self.gerenciador.trocar_estado("fase")
+                    self.gerenciador.trocar_estado("fase1")
 
     def desenhar(self, tela):
         tela.fill(cores.PRETO)
@@ -178,7 +266,8 @@ class GerenciadorEstados:
     def __init__(self):
         self.estados = {
             "menu": MenuInicial(self),
-            "fase": Fase(self),  # Esse estado já é criado na inicialização
+            "fase1": Fase(self),  # Esse estado já é criado na inicialização
+            "fase2": Fase2(self),  # Esse estado já é criado na inicialização
             "game_over": TelaGameOver(self)
         }
         self.estado_atual = self.estados["menu"]
@@ -188,9 +277,12 @@ class GerenciadorEstados:
     def trocar_estado(self, novo_estado):
         if novo_estado in self.estados:
             print("Tentando trocar para o estado:", novo_estado)
-            if novo_estado == "fase" :
+            if novo_estado == "fase1" :
                 # Recria o estado "fase" ao trocar para ele apenas se não for a fase atual
-                self.estados["fase"] = Fase(self)
+                self.estados["fase1"] = Fase(self)
+            elif novo_estado == "fase2":
+                # Recria o estado "fase" ao trocar para ele apenas se não for a fase atual
+                self.estados["fase2"] = Fase2(self)
             else:
                 pass
 
