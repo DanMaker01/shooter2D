@@ -2,16 +2,18 @@ import pygame
 import config as conf
 from gerenciador_estados import GerenciadorEstados
 
-# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 # TO-DO
-# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 #  
 #  - melhorar as mortes
 #  - atirar() na classe Inimigo
-#  - criar estrutura de Rotas, vai ser usada para o movimento dos boss
+#  - Fazer um arquivo chamado roteiro.txt que diz a ordem das fases e padrões dos boss
 #  - 
 # 
-# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+
+
 
 
 def main():
@@ -29,10 +31,6 @@ def main():
         gerenciador.desenhar(tela)
         clock.tick(conf.FPS)  # Controla o FPS da tela
     pygame.quit()
-
-
-
-
 
 
 

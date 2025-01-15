@@ -24,12 +24,12 @@ class Nave(pygame.sprite.Sprite):
         self.y_pos = self.rect.y
 
         # Definir hitbox centralizada reduzida-----------------------------
-        self.hitbox_escala = 0.15
+        self.hitbox_escala = 0.10
         self.hitbox = Hitbox(0,0, self.rect.width*self.hitbox_escala, self.rect.height*self.hitbox_escala)
 
         # Variáveis de movimento -------------------------------------------
-        self.velocidade = 2000
-        self.velocidade_focado = 500
+        self.velocidade = 1500
+        self.velocidade_focado = 300
         self.gerenciador = gerenciador  # Referência ao GerenciadorObjetos
         
         # Controle de tiros ------------------------------------------------
