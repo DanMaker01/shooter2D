@@ -4,6 +4,7 @@ import pygame
 import config as conf
 from tiro import Tiro
 from hitbox import Hitbox
+import random
 
 class Nave(pygame.sprite.Sprite):
     def __init__(self, gerenciador):
@@ -73,11 +74,12 @@ class Nave(pygame.sprite.Sprite):
         self.hitbox.rect.x = self.rect.x + self.rect.width * 0.25
         self.hitbox.rect.y = self.rect.y + self.rect.height * 0.25
 
-        # BOMBA!!! (controle de cooldown da bomba)------------------------------
+        # BOMBA!!! (controle de cooldown da bomba)------------------------------------------
         if keys[pygame.K_x] or keys[pygame.K_SPACE]:
             if self.tempo_recarga_bomba == 0:
-                for vel in [300, 400, 500, 580, 660]:  # Distâncias das bombas
-                    self.bomba(velocidade=vel)
+                velocidades = [300, 400, 500, 580, 660]
+                for vel in velocidades:  # Distâncias das bombas
+                    self.bomba(velocidade=vel, fase=(vel/velocidades[-1])*360)
 
                 # Define o cooldown da bomba
                 self.tempo_recarga_bomba = self.tempo_recarga_bomba_max
@@ -114,12 +116,18 @@ class Nave(pygame.sprite.Sprite):
         """
         if self.tempo_recarga == 0:  # Só atira se a recarga estiver zerada
             if not self.focado:  # Desfocado
-                ranges = 11
+                ranges = 9
                 for i in range(ranges):
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000+2000*sin(math.radians(180/(ranges-1) * i)), 180 - (180/(ranges-1)) * i)
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 
+                                1000+2000*sin(math.radians(180/(ranges-1) * i)),    # velocidade
+                                180 - (180/(ranges-1)) * i+21)                         # angulo
+                    self.gerenciador.adicionar_tiro(tiro)
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 
+                                1000+2000*sin(math.radians(180/(ranges-1) * i)),    # velocidade
+                                180 - (180/(ranges-1)) * i-21)                         # angulo
                     self.gerenciador.adicionar_tiro(tiro)
                     
-                self.tempo_recarga = 3 * self.tempo_recarga_max  # Ajuste para definir a taxa de disparo
+                self.tempo_recarga = 3 * self.tempo_recarga_max  # Ajuste para definir a taxa de disparo 
             else: # Focado
                 for i in range(2):
                     tiro = Tiro(self.rect.centerx, self.rect.top, 1000-200*i, 90 + 2 * i)

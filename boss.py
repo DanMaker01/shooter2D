@@ -10,7 +10,7 @@ class Boss(Inimigo):
         super().__init__()
         
         # Carrega a imagem de Boss
-        self.image = pygame.image.load("sprites/inimigo.png").convert_alpha()
+        self.image = pygame.image.load("sprites/boss.png").convert_alpha()
         # Posição inicial usando floats
         self.x = 0.5 * (conf.LARGURA_TELA - self.rect.width)
         self.y = 0
@@ -20,7 +20,7 @@ class Boss(Inimigo):
         self.rect.y = round(self.y)
 
         self.velocidade = 1
-        self.hp_max = 200
+        self.hp_max = 300
         self.hp = self.hp_max
 
         self.gerenciador = gerenciador
@@ -32,7 +32,7 @@ class Boss(Inimigo):
         """
         # Atualiza as posições com floats
         self.x += self.velocidade / 2
-        self.y += self.velocidade / 8
+        self.y += self.velocidade / 9
 
         # Atualiza o rect com valores arredondados
         self.rect.x = round(self.x)
@@ -40,8 +40,8 @@ class Boss(Inimigo):
 
         # Reseta a posição se sair da tela
         if self.rect.left > conf.LARGURA_TELA:
-            self.x = 0  # Usar variável float
-            self.rect.x = round(self.x)
+            self.x = 0-self.rect.width  # Usar variável float
+            self.rect.x = round(self.x - self.rect.width)
 
         self.timer += 1
 
