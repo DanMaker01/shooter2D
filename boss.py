@@ -1,6 +1,5 @@
 import pygame
 import config as conf
-# import cores
 import random
 from inimigo import Inimigo
 from tiro import TiroInimigo
@@ -11,107 +10,122 @@ class Boss(Inimigo):
     def __init__(self, gerenciador):
         super().__init__()
         
-        # Carrega a imagem de Boss
+        # Carrega a imagem do boss
         self.image = pygame.image.load("sprites/boss.png").convert_alpha()
-        # self.x = 0.5 * (conf.LARGURA_TELA - self.rect.width)
-        # self.y = 50
-
-        # Posição inicial usando floats
-        self.x_pos = (3/4)*conf.LARGURA_TELA #- self.rect.width/2
-        self.y_pos = (1/8)*conf.ALTURA_TELA #- self.rect.height/2
         
-        # Atribuição inicial ao rect
+        # Define a posição inicial usando floats para precisão
+        self.x_pos = (3 / 4) * conf.LARGURA_TELA
+        self.y_pos = (1 / 8) * conf.ALTURA_TELA
+        
+        # Inicializa o rect do boss
         self.rect.x = round(self.x_pos)
         self.rect.y = round(self.y_pos)
 
         self.velocidade = 1
-        self.hp_max = 150
+        self.hp_max = 200
         self.hp = self.hp_max
 
+        # Gerenciador de entidades e inicialização do timer
         self.gerenciador = gerenciador
         self.timer = 0
 
-
+        # Controle de rota e movimento
         self.delta_x = 0
         self.delta_y = 0
         self.se_movendo_agora = False
         self.rota = Rota()
-        pass
 
-    def definir_rota(self,vetor_pos, vetor_tempo):
-        for i in range(len(vetor_pos)):
-            self.rota.rota_add(vetor_pos[i],vetor_tempo[i])
-        pass
+    def definir_rota(self, vetor_pos, vetor_tempo):
+        """
+        Define a rota do boss adicionando posições e tempos correspondentes.
+        """
+        for pos, tempo in zip(vetor_pos, vetor_tempo):
+            self.rota.rota_add(pos, tempo)
 
     def update(self):
         """
-        Atualiza a posição do boss de acordo com a rota e redefine-o se sair da tela.
+        Atualiza a posição do boss com base na rota e realiza eventos baseados no tempo.
         """
-        if self.rota.len_rota() != 0:  # Verifica se a rota não está vazia
+        if self.rota.len_rota() > 0:  # Verifica se há itens na rota
             if self.se_movendo_agora:
-                # Continua movendo
-                posicao_desejada, tempo_desejado = self.rota.rota_get_item_atual()
-                posicao_atual = (self.x_pos, self.y_pos)
-
-                # Atualiza a posição com delta
-                self.x_pos += self.delta_x
-                self.y_pos += self.delta_y
-
-                # Verifica se chegou ao destino (com tolerância de 1 pixel)
-                if abs(self.x_pos - posicao_desejada[0]) < 1 and abs(self.y_pos - posicao_desejada[1]) < 1:
-                    # print("chegou ao destino")
-                    print(f"Posição atual: ({self.x_pos:.2f}, {self.y_pos:.2f})")
-                    print(f"Tempo: {self.timer}")
-                    print(f"Posição desejada: {posicao_desejada}")
-                    self.x_pos, self.y_pos = posicao_desejada  # Garante que atinja a posição exata
-                    self.delta_x = 0
-                    self.delta_y = 0
-                    self.se_movendo_agora = False
-                    self.rota.rota_avancar_item()  # Pega o próximo item da rota
-
+                self._continuar_movimento()
             else:
-                # Inicia movimento para o próximo ponto da rota
-                posicao_desejada, tempo_desejado = self.rota.rota_get_item_atual()
-                posicao_atual = (self.x_pos, self.y_pos)
+                self._iniciar_movimento()
 
-                # Calcula a velocidade necessária para atingir a posição no tempo desejado
-                if tempo_desejado > 0:
-                    self.delta_x = (posicao_desejada[0] - posicao_atual[0]) / tempo_desejado
-                    self.delta_y = (posicao_desejada[1] - posicao_atual[1]) / tempo_desejado
-                else:
-                    self.delta_x = self.delta_y = 0  # Evita divisão por zero
-
-                # Inicia o movimento
-                self.se_movendo_agora = True
-
-        # Atualiza o rect com valores arredondados
+        # Atualiza as posições do rect e da hitbox
         self.rect.x = round(self.x_pos)
         self.rect.y = round(self.y_pos)
         self.hitbox.rect.x = self.rect.x
         self.hitbox.rect.y = self.rect.y
 
-        # Eventos baseados no timer
+        # Eventos baseados no tempo
+        self._executar_eventos_tempo()
+
+        # Incrementa o timer
+        self.timer += 1
+
+    def _continuar_movimento(self):
+        """
+        Continua o movimento em direção ao próximo ponto da rota.
+        """
+        posicao_desejada, _ = self.rota.rota_get_item_atual()
+
+        # Atualiza a posição com os deltas
+        self.x_pos += self.delta_x
+        self.y_pos += self.delta_y
+
+        # Verifica se o boss chegou ao destino
+        if abs(self.x_pos - posicao_desejada[0]) < 1 and abs(self.y_pos - posicao_desejada[1]) < 1:
+            self.x_pos, self.y_pos = posicao_desejada
+            self.delta_x = 0
+            self.delta_y = 0
+            self.se_movendo_agora = False
+            self.rota.rota_avancar_item()  # Avança para o próximo ponto
+
+    def _iniciar_movimento(self):
+        """
+        Calcula os deltas necessários para o próximo ponto da rota.
+        """
+        posicao_desejada, tempo_desejado = self.rota.rota_get_item_atual()
+        posicao_atual = (self.x_pos, self.y_pos)
+
+        if tempo_desejado > 0:
+            self.delta_x = (posicao_desejada[0] - posicao_atual[0]) / tempo_desejado
+            self.delta_y = (posicao_desejada[1] - posicao_atual[1]) / tempo_desejado
+        else:
+            self.delta_x = self.delta_y = 0
+
+        self.se_movendo_agora = True
+
+    def _executar_eventos_tempo(self):
+        """
+        Executa eventos baseados no tempo.
+        """
         if self.timer % 100 == 0:
             self.flor(n=16)
             print(f"Flor - Tempo: {self.timer}")
 
         if self.timer % 139 == 0:
-            self.flor(360, 5, 200, random.randint(0, 360))
+            self.flor(r=360, n=5, v=200, a=random.randint(0, 360))
 
-        # Controle de tempo
-        self.timer += 1
-        pass
-
-
-    
     def atirar(self):
+        """
+        Atira um projétil básico.
+        """
         tiro = TiroInimigo(self.rect.centerx, self.rect.bottom, 200, 270)
         self.gerenciador.adicionar_tiro_inimigo(tiro)
 
     def flor(self, r=360, n=36, v=200, a=0):
+        """
+        Dispara projéteis em padrão circular.
+        """
         for i in range(n):
-            tiro = TiroInimigo(self.rect.centerx, self.rect.bottom, v, (r/n)*i + a) ## IMPLEMENTAR, formato do feixe
+            angulo = (r / n) * i + a
+            tiro = TiroInimigo(self.rect.centerx, self.rect.bottom, v, angulo)
             self.gerenciador.adicionar_tiro_inimigo(tiro)
+
     def dano(self):
+        """
+        Aplica dano ao boss.
+        """
         self.hp -= 1
-        pass

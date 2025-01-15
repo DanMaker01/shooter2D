@@ -10,7 +10,8 @@ from gerenciador_estados import GerenciadorEstados
 #  - atirar() na classe Inimigo
 #  - Fazer um arquivo chamado roteiro.txt que diz a ordem das fases e padrões dos boss
 #  - Está com problema para chegar na hora certa na posição certa.
-# 
+#  - projetil lançado focado também deve ter diagonal (mais fraca)
+#  - projetil lançado sem foco deve ter mais um tiro no meio
 # -------------------------------------------------------------------------------------
 
 

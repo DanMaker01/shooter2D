@@ -118,15 +118,18 @@ class Nave(pygame.sprite.Sprite):
         """
         if self.tempo_recarga == 0:  # Só atira se a recarga estiver zerada
             if not self.focado:  # Desfocado
+                
+                tiro = Tiro(self.rect.centerx, self.rect.top, 3000, 90)
+                self.gerenciador.adicionar_tiro(tiro)
                 ranges = 9
                 for i in range(ranges):
                     tiro = Tiro(self.rect.centerx, self.rect.top, 
-                                1000+2000*sin(math.radians(180/(ranges-1) * i)),    # velocidade
+                                700+2000*sin(math.radians(180/(ranges-1) * i)),    # velocidade
                                 180 - (180/(ranges-1)) * i+21)                         # angulo
                     self.gerenciador.adicionar_tiro(tiro)
                     
                     tiro = Tiro(self.rect.centerx, self.rect.top, 
-                                1000+2000*sin(math.radians(180/(ranges-1) * i)),    # velocidade
+                                700+2000*sin(math.radians(180/(ranges-1) * i)),    # velocidade
                                 180 - (180/(ranges-1)) * i-21)                         # angulo
                     self.gerenciador.adicionar_tiro(tiro)
                     
