@@ -1,3 +1,4 @@
+import math
 import pygame
 import config as conf
 import cores
@@ -66,19 +67,28 @@ class Fase1(EstadoBase):
         Reinicia o estado do jogo com os objetos necessários.
         Retorna um gerenciador de objetos e o jogador.
         """
+        # --------------------------------------------------------
         gerenciador_objetos = GerenciadorObjetos()
 
+        # --------------------------------------------------------
         jogador = Nave(gerenciador_objetos)
         gerenciador_objetos.adicionar_jogador(jogador)
 
+        # --------------------------------------------------------
         boss = Boss(gerenciador_objetos)
+        rota_pos = [ (128,96), (128,288), (384,288), (384,96)] #retangulo
+        rota_tempo = [ 200, 200, 200, 200]
+        boss.definir_rota(rota_pos, rota_tempo)
         gerenciador_objetos.adicionar_inimigo(boss)
 
+
+        # --------------------------------------------------------
         # Adiciona inimigos iniciais
         for i in range(3):
             inimigo = Inimigo()
             gerenciador_objetos.adicionar_inimigo(inimigo)
 
+        # --------------------------------------------------------
 
         return gerenciador_objetos, jogador
     

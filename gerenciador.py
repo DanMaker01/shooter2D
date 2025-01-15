@@ -91,7 +91,7 @@ class GerenciadorObjetos:
             tiro = self.remover_objeto(tiro)
             # se for um BOSS
             if isinstance(inimigo, Boss): # É um BOSS!!!!
-                print("boss foi atingido!!")
+                # print("boss foi atingido!!")
                 inimigo.dano()
                 if inimigo.hp <= 0:
                     self.remover_objeto(inimigo)
@@ -110,7 +110,8 @@ class GerenciadorObjetos:
 
                 # Caso contrário, o boss segue vivo
                 else:
-                    print("boss continua vivo.") 
+                    pass
+                    # print("boss continua vivo.") 
                     # print(f"HP: {inimigo.hp}/ {inimigo.hp_max}")
 
             else:  # Inimigo normal

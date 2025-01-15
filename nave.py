@@ -22,14 +22,10 @@ class Nave(pygame.sprite.Sprite):
         # para depois serem convertidas em inteiros para serem aceitos por rect.x e rect.y)----------------------------------
         self.x_pos = self.rect.x
         self.y_pos = self.rect.y
-        
+
         # Definir hitbox centralizada reduzida-----------------------------
-        proporcao = 0.50
-        self.hitbox = Hitbox(
-            self.rect.x + (self.rect.width*proporcao),
-            self.rect.y + (self.rect.height*proporcao),
-            self.rect.width * proporcao,
-            self.rect.height * proporcao)
+        self.hitbox_escala = 0.15
+        self.hitbox = Hitbox(0,0, self.rect.width*self.hitbox_escala, self.rect.height*self.hitbox_escala)
 
         # Variáveis de movimento -------------------------------------------
         self.velocidade = 2000
@@ -41,9 +37,10 @@ class Nave(pygame.sprite.Sprite):
         self.tempo_recarga_max = 25
         
         self.tempo_recarga_bomba = 0  # Tempo para controlar o cooldown da bomba
-        self.tempo_recarga_bomba_max = 1000  # Tempo máximo de cooldown para a bomba
+        self.tempo_recarga_bomba_max = 500  # Tempo máximo de cooldown para a bomba
         
         self.focado = False
+
         pass
 
     def update(self):
@@ -66,17 +63,17 @@ class Nave(pygame.sprite.Sprite):
             else:
                 self.x_pos += self.velocidade / 1000
         
-        # Atualiza o rect.x com base na posição flutuante
+        # Atualiza o rect.x e rect.y com base na posição flutuante
         self.rect.x = int(self.x_pos)
         self.rect.y = int(self.y_pos)
-
         # Atualiza a hitbox
-        self.hitbox.rect.x = self.rect.x + self.rect.width * 0.25
-        self.hitbox.rect.y = self.rect.y + self.rect.height * 0.25
+        self.hitbox.rect.x = self.rect.x + ( self.rect.width * (1-self.hitbox_escala) / 2)
+        self.hitbox.rect.y = self.rect.y + ( self.rect.height * (1-self.hitbox_escala) / 2)
 
         # BOMBA!!! (controle de cooldown da bomba)------------------------------------------
         if keys[pygame.K_x] or keys[pygame.K_SPACE]:
             if self.tempo_recarga_bomba == 0:
+                #gera as 5 flores, cada uma com sua velocidade inicial
                 velocidades = [300, 400, 500, 580, 660]
                 for vel in velocidades:  # Distâncias das bombas
                     self.bomba(velocidade=vel, fase=(vel/velocidades[-1])*360)
@@ -84,9 +81,9 @@ class Nave(pygame.sprite.Sprite):
                 # Define o cooldown da bomba
                 self.tempo_recarga_bomba = self.tempo_recarga_bomba_max
             else:
-                pass
+                pass # Se ainda estiver recarregando a bomba, não faz nada.
             
-        # ATIRAR continuamente enquanto o SPACE está pressionado
+        # ATIRAR continuamente enquanto o "Z" está pressionado
         if keys[pygame.K_z]:
             self.atirar()  # Atirar
 
@@ -103,6 +100,10 @@ class Nave(pygame.sprite.Sprite):
         # Atualiza o cooldown da bomba
         if self.tempo_recarga_bomba > 0:
             self.tempo_recarga_bomba -= 1
+        
+        # -----------------------------------------------------------------------------------
+        # -----------------------------------------------------------------------------------
+        pass
 
     def desenhar_hitbox(self, tela):
         """Desenha a hitbox com uma cor para visualização."""
