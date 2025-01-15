@@ -22,6 +22,8 @@ class Inimigo(pygame.sprite.Sprite):
         # print(self.hitbox.rect.x, self.hitbox.rect.y, self.hitbox.rect.width, self.hitbox.rect.height)
 
         self.velocidade = random.randint(2, 6)
+        # hp inimigo
+        self.hp = 1
 
     def update(self):
         """

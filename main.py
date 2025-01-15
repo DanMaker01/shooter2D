@@ -5,15 +5,15 @@ from gerenciador_estados import GerenciadorEstados
 # -------------------------------------------------------------------------
 # TO-DO
 # -------------------------------------------------------------------------
-#  - classe de hitbox
+#  
 #  - melhorar as mortes
 #  - corrigir bug com o boss
 #  - ao matar boss passa de fase
 #  - multifases
-# 
-# 
-# 
-# 
+#  - atirar() na classe Inimigo
+#  - definir melhor o que é boss e o que é inimigo
+#  - criar estrutura de rotas, vai ser usada para o movimento dos boss
+#  - 
 # 
 # -------------------------------------------------------------------------
 

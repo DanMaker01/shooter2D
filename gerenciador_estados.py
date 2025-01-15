@@ -83,6 +83,9 @@ class Fase(EstadoBase):
             if evento.type == pygame.KEYDOWN:
                 if evento.key in [pygame.K_p, pygame.K_ESCAPE]:
                     self.gerenciador.trocar_estado("pause")
+                if evento.key == pygame.K_r:
+                    self.gerenciador.trocar_estado("fase")
+                
 
     def atualizar(self):
         self.gerenciador_objetos.atualizar()
@@ -101,31 +104,27 @@ class Fase(EstadoBase):
         #desenhar HUD
         # Fonte para o texto
         fonte = pygame.font.SysFont("Arial", 24)
-
         # Exibindo a pontuação
         tela.blit(fonte.render(f"Pontuação: {self.pontuacao}", True, cores.VERMELHO), (10, 10))
-
         # Exibindo o FPS
         fps = str(int(self.gerenciador.fps))  # Usa o FPS armazenado no gerenciador
         tela.blit(fonte.render(f"FPS: {fps}", True, cores.VERMELHO), (10, 40))
-
         # Exibindo o número de tiros
         num_tiros = len(self.gerenciador_objetos.tiros)  # Número de tiros do jogador
         tela.blit(fonte.render(f"Tiros: {num_tiros}", True, cores.VERMELHO), (10, 70))
-
         # Exibindo o número de tiros dos inimigos
         num_inimigos = len(self.gerenciador_objetos.inimigos)  # Número de tiros dos inimigos
         tela.blit(fonte.render(f"Inimigos: {num_inimigos}", True, cores.VERMELHO), (10, 100))
-
+        # Exibindo o número de tiros dos inimigos
         num_tiros_inimigos = len(self.gerenciador_objetos.tiros_inimigos)  # Número de tiros dos inimigos
         tela.blit(fonte.render(f"Tiros Inimigos: {num_tiros_inimigos}", True, cores.VERMELHO), (10, 130))
         
         #exibindo a vida do boss
         if len(self.gerenciador_objetos.inimigos) > 0:
-            
             inimigo = self.gerenciador_objetos.inimigos.sprites()[0]
             vida_boss = inimigo.hp
-            tela.blit(fonte.render(f"Vida Boss: {vida_boss}", True, cores.VERMELHO), (10, 160))
+            vida_boss_max = inimigo.hp_max
+            tela.blit(fonte.render(f"Vida Boss: {vida_boss}/{vida_boss_max}", True, cores.VERMELHO), (10, 160))
             pass
         
         # Atualizando a tela
@@ -168,7 +167,8 @@ class GerenciadorEstados:
 
     def trocar_estado(self, novo_estado):
         if novo_estado in self.estados:
-            if novo_estado == "fase" and self.estado_atual.__class__ != Fase:
+            print("Tentando trocar para o estado:", novo_estado)
+            if novo_estado == "fase" :
                 # Recria o estado "fase" ao trocar para ele apenas se não for a fase atual
                 self.estados["fase"] = Fase(self)
             self.estado_atual = self.estados[novo_estado]

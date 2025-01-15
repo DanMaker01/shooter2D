@@ -1,3 +1,5 @@
+from math import sin
+import math
 import pygame
 import config as conf
 from tiro import Tiro
@@ -10,26 +12,30 @@ class Nave(pygame.sprite.Sprite):
         imagem_original = pygame.image.load("sprites/nave.png").convert_alpha()
         self.image = imagem_original
         
+        # Definir o retangulo da nave
         self.rect = self.image.get_rect()
         self.rect.x = conf.LARGURA_TELA // 2
         self.rect.y = conf.ALTURA_TELA - 100
         
-        # Variáveis de posição flutuante
+        # Variáveis de posição flutuante (ações são feitas nas posições flutuantes, 
+        # para depois serem convertidas em inteiros para serem aceitos por rect.x e rect.y)----------------------------------
         self.x_pos = self.rect.x
         self.y_pos = self.rect.y
         
-        # Definir hitbox centralizada
+        # Definir hitbox centralizada reduzida-----------------------------
         proporcao = 0.50
         self.hitbox = Hitbox(
-            self.rect.x + (self.rect.width / 2),
-            self.rect.y + (self.rect.height / 2),
+            self.rect.x + (self.rect.width*proporcao),
+            self.rect.y + (self.rect.height*proporcao),
             self.rect.width * proporcao,
             self.rect.height * proporcao)
 
+        # Variáveis de movimento -------------------------------------------
         self.velocidade = 2000
         self.velocidade_focado = 500
         self.gerenciador = gerenciador  # Referência ao GerenciadorObjetos
         
+        # Controle de tiros ------------------------------------------------
         self.tempo_recarga = 0  # Tempo para controlar a taxa de tiro
         self.tempo_recarga_max = 20
         
@@ -37,6 +43,7 @@ class Nave(pygame.sprite.Sprite):
         self.tempo_recarga_bomba_max = 100  # Tempo máximo de cooldown para a bomba
         
         self.focado = False
+        pass
 
     def update(self):
         """
@@ -45,14 +52,14 @@ class Nave(pygame.sprite.Sprite):
         # super().update()
         keys = pygame.key.get_pressed()
         
-        # MOVIMENTO (utilizando x_pos e y_pos para movimento suave)
+        # MOVIMENTO (utilizando x_pos e y_pos para movimento suave)-----------
         if keys[pygame.K_LEFT] and self.x_pos > 0:
             if self.focado:
                 self.x_pos -= self.velocidade_focado / 1000
             else:
                 self.x_pos -= self.velocidade / 1000
 
-        if keys[pygame.K_RIGHT] and self.x_pos < conf.LARGURA_TELA:
+        if keys[pygame.K_RIGHT] and self.x_pos < conf.LARGURA_TELA-self.rect.width:
             if self.focado:
                 self.x_pos += self.velocidade_focado / 1000
             else:
@@ -66,7 +73,7 @@ class Nave(pygame.sprite.Sprite):
         self.hitbox.rect.x = self.rect.x + self.rect.width * 0.25
         self.hitbox.rect.y = self.rect.y + self.rect.height * 0.25
 
-        # BOMBA!!! (controle de cooldown da bomba)
+        # BOMBA!!! (controle de cooldown da bomba)------------------------------
         if keys[pygame.K_x] or keys[pygame.K_SPACE]:
             if self.tempo_recarga_bomba == 0:
                 for vel in [300, 400, 500, 580, 660]:  # Distâncias das bombas
@@ -81,7 +88,7 @@ class Nave(pygame.sprite.Sprite):
         if keys[pygame.K_z]:
             self.atirar()  # Atirar
 
-        # Focar/desfocar
+        # Focar/desfocar---------------------------------------------------------
         if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]:
             self.focar()
         else:
@@ -98,23 +105,26 @@ class Nave(pygame.sprite.Sprite):
     def desenhar_hitbox(self, tela):
         """Desenha a hitbox com uma cor para visualização."""
         pygame.draw.rect(tela, (255, 0, 0), self.hitbox.rect, 4)  # Desenha a hitbox em vermelho (2px de espessura)        
-
+        pass
+    from math import sin
+    
     def atirar(self):
         """
         Gera tiros no gerenciador, com uma taxa de disparo controlada.
         """
         if self.tempo_recarga == 0:  # Só atira se a recarga estiver zerada
-            if not self.focado:  # Focado
-                for i in range(5):
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 2000, 180 - 45 * i)
+            if not self.focado:  # Desfocado
+                ranges = 11
+                for i in range(ranges):
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000+2000*sin(math.radians(180/(ranges-1) * i)), 180 - (180/(ranges-1)) * i)
                     self.gerenciador.adicionar_tiro(tiro)
                     
                 self.tempo_recarga = 3 * self.tempo_recarga_max  # Ajuste para definir a taxa de disparo
-            else:
+            else: # Focado
                 for i in range(2):
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000, 90 + 2 * i)
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000-200*i, 90 + 2 * i)
                     self.gerenciador.adicionar_tiro(tiro)
-                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000, 90 - 2 * i)
+                    tiro = Tiro(self.rect.centerx, self.rect.top, 1000-200*i, 90 - 2 * i)
                     self.gerenciador.adicionar_tiro(tiro)
 
                 self.tempo_recarga = self.tempo_recarga_max  # Ajuste para definir a taxa de disparo
