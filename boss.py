@@ -47,8 +47,6 @@ class Boss(Inimigo):
         """
         Atualiza a posição do boss de acordo com a rota e redefine-o se sair da tela.
         """
-        # ------------------------------------------------------------------------
-        # Mover na rota
         if self.rota.len_rota() != 0:  # Verifica se a rota não está vazia
             if self.se_movendo_agora:
                 # Continua movendo
@@ -61,11 +59,16 @@ class Boss(Inimigo):
 
                 # Verifica se chegou ao destino (com tolerância de 1 pixel)
                 if abs(self.x_pos - posicao_desejada[0]) < 1 and abs(self.y_pos - posicao_desejada[1]) < 1:
+                    # print("chegou ao destino")
+                    print(f"Posição atual: ({self.x_pos:.2f}, {self.y_pos:.2f})")
+                    print(f"Tempo: {self.timer}")
+                    print(f"Posição desejada: {posicao_desejada}")
                     self.x_pos, self.y_pos = posicao_desejada  # Garante que atinja a posição exata
                     self.delta_x = 0
                     self.delta_y = 0
                     self.se_movendo_agora = False
                     self.rota.rota_avancar_item()  # Pega o próximo item da rota
+
             else:
                 # Inicia movimento para o próximo ponto da rota
                 posicao_desejada, tempo_desejado = self.rota.rota_get_item_atual()
@@ -78,27 +81,27 @@ class Boss(Inimigo):
                 else:
                     self.delta_x = self.delta_y = 0  # Evita divisão por zero
 
+                # Inicia o movimento
                 self.se_movendo_agora = True
 
-        # ------------------------------------------------------------------------
-        # ------------------------------------------------------------------------
         # Atualiza o rect com valores arredondados
         self.rect.x = round(self.x_pos)
         self.rect.y = round(self.y_pos)
-        # Atualiza a hitbox baseada no rect da classe sprite
         self.hitbox.rect.x = self.rect.x
         self.hitbox.rect.y = self.rect.y
-        # ------------------------------------------------------------------------
-        # Executa eventos baseados no timer
+
+        # Eventos baseados no timer
         if self.timer % 100 == 0:
             self.flor(n=16)
+            print(f"Flor - Tempo: {self.timer}")
 
         if self.timer % 139 == 0:
             self.flor(360, 5, 200, random.randint(0, 360))
 
-        # ------------------------------------------------------------------------
         # Controle de tempo
         self.timer += 1
+        pass
+
 
     
     def atirar(self):

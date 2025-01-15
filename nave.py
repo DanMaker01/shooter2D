@@ -109,6 +109,7 @@ class Nave(pygame.sprite.Sprite):
         """Desenha a hitbox com uma cor para visualização."""
         pygame.draw.rect(tela, (255, 0, 0), self.hitbox.rect, 4)  # Desenha a hitbox em vermelho (2px de espessura)        
         pass
+    
     from math import sin
     
     def atirar(self):

@@ -9,7 +9,7 @@ from gerenciador_estados import GerenciadorEstados
 #  - melhorar as mortes
 #  - atirar() na classe Inimigo
 #  - Fazer um arquivo chamado roteiro.txt que diz a ordem das fases e padrões dos boss
-#  - 
+#  - Está com problema para chegar na hora certa na posição certa.
 # 
 # -------------------------------------------------------------------------------------
 
