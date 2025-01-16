@@ -104,8 +104,9 @@ class Fase1(EstadoBase):
                 
 
     def atualizar(self):
-        self.gerenciador_objetos.atualizar()
         self.jogador.update()
+        self.gerenciador_objetos.atualizar()
+        # self.boss.update() # já é atualizado nos objetos
         estado, pontos = self.gerenciador_objetos.verificar_colisoes()
         self.pontuacao += pontos
         if estado == "fase2":

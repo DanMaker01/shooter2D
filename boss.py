@@ -47,9 +47,14 @@ class Boss(Inimigo):
         Atualiza a posição do boss com base na rota e realiza eventos baseados no tempo.
         """
         if self.rota.len_rota() > 0:  # Verifica se há itens na rota
+            print("update: self.timer = ", self.timer)
             if self.se_movendo_agora:
+                print("continuar movimento")
                 self._continuar_movimento()
             else:
+                # está começando atrasado em 1 tick @@@@@@@@@@@
+                # começa a mover
+                print("iniciar NOVO movimento!")
                 self._iniciar_movimento()
 
         # Atualiza as posições do rect e da hitbox
@@ -62,7 +67,16 @@ class Boss(Inimigo):
         self._executar_eventos_tempo()
 
         # Incrementa o timer
+        if self.timer == 198:
+            print("self.timer = 198")
+        if self.timer == 199:
+            print("self.timer = 199")
+        if self.timer == 200:
+            print("self.timer = 200")
+        if self.timer == 201:
+            print("self.timer = 201")
         self.timer += 1
+        print("acrescenta +1 ao self.timer, agora é ", self.timer)
 
     def _continuar_movimento(self):
         """
@@ -81,6 +95,13 @@ class Boss(Inimigo):
             self.delta_y = 0
             self.se_movendo_agora = False
             self.rota.rota_avancar_item()  # Avança para o próximo ponto
+            self.rect.x = round(self.x_pos)
+            self.rect.y = round(self.y_pos)
+            self.hitbox.rect.x = self.rect.x
+            self.hitbox.rect.y = self.rect.y
+            
+            pass
+        pass
 
     def _iniciar_movimento(self):
         """
@@ -88,6 +109,16 @@ class Boss(Inimigo):
         """
         posicao_desejada, tempo_desejado = self.rota.rota_get_item_atual()
         posicao_atual = (self.x_pos, self.y_pos)
+        
+        if self.timer == 198:
+            print("_iniciar_movimento: self.timer = 198")
+        if self.timer == 199:
+            print("_iniciar_movimento: self.timer = 199")
+        if self.timer == 200:
+            print("_iniciar_movimento: self.timer = 200")
+        if self.timer == 201:
+            print("_iniciar_movimento: self.timer = 201")
+        print("posicao atual:", posicao_atual, "posicao desejada:", posicao_desejada, "tempo_atual", self.timer)
 
         if tempo_desejado > 0:
             self.delta_x = (posicao_desejada[0] - posicao_atual[0]) / tempo_desejado
