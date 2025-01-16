@@ -14,8 +14,8 @@ class Boss(Inimigo):
         self.image = pygame.image.load("sprites/boss.png").convert_alpha()
         
         # Define a posição inicial usando floats para precisão
-        self.x_pos = (3 / 4) * conf.LARGURA_TELA
-        self.y_pos = (1 / 8) * conf.ALTURA_TELA
+        self.x_pos = 0
+        self.y_pos = 0
         
         # Inicializa o rect do boss
         self.rect.x = round(self.x_pos)
@@ -47,14 +47,14 @@ class Boss(Inimigo):
         Atualiza a posição do boss com base na rota e realiza eventos baseados no tempo.
         """
         if self.rota.len_rota() > 0:  # Verifica se há itens na rota
-            print("update: self.timer = ", self.timer)
+            # print("update: self.timer = ", self.timer)
             if self.se_movendo_agora:
-                print("continuar movimento")
+                # print("continuar movimento")
                 self._continuar_movimento()
             else:
                 # está começando atrasado em 1 tick @@@@@@@@@@@
                 # começa a mover
-                print("iniciar NOVO movimento!")
+                # print("iniciar NOVO movimento!")
                 self._iniciar_movimento()
 
         # Atualiza as posições do rect e da hitbox
@@ -67,16 +67,7 @@ class Boss(Inimigo):
         self._executar_eventos_tempo()
 
         # Incrementa o timer
-        if self.timer == 198:
-            print("self.timer = 198")
-        if self.timer == 199:
-            print("self.timer = 199")
-        if self.timer == 200:
-            print("self.timer = 200")
-        if self.timer == 201:
-            print("self.timer = 201")
         self.timer += 1
-        print("acrescenta +1 ao self.timer, agora é ", self.timer)
 
     def _continuar_movimento(self):
         """
@@ -110,15 +101,15 @@ class Boss(Inimigo):
         posicao_desejada, tempo_desejado = self.rota.rota_get_item_atual()
         posicao_atual = (self.x_pos, self.y_pos)
         
-        if self.timer == 198:
-            print("_iniciar_movimento: self.timer = 198")
-        if self.timer == 199:
-            print("_iniciar_movimento: self.timer = 199")
-        if self.timer == 200:
-            print("_iniciar_movimento: self.timer = 200")
-        if self.timer == 201:
-            print("_iniciar_movimento: self.timer = 201")
-        print("posicao atual:", posicao_atual, "posicao desejada:", posicao_desejada, "tempo_atual", self.timer)
+        # if self.timer == 198:
+        #     print("_iniciar_movimento: self.timer = 198")
+        # if self.timer == 199:
+        #     print("_iniciar_movimento: self.timer = 199")
+        # if self.timer == 200:
+        #     print("_iniciar_movimento: self.timer = 200")
+        # if self.timer == 201:
+        #     print("_iniciar_movimento: self.timer = 201")
+        print("VAI INICIAR MOVIMENTO!! posicao atual:", posicao_atual, "posicao desejada:", posicao_desejada, "tempo_atual", self.timer, "tempo_desejado", tempo_desejado)
 
         if tempo_desejado > 0:
             self.delta_x = (posicao_desejada[0] - posicao_atual[0]) / tempo_desejado
@@ -132,12 +123,35 @@ class Boss(Inimigo):
         """
         Executa eventos baseados no tempo.
         """
-        if self.timer % 100 == 0:
-            self.flor(n=16)
-            print(f"Flor - Tempo: {self.timer}")
+        fase = 3
+        if self.timer != 0:
 
-        if self.timer % 139 == 0:
-            self.flor(r=360, n=5, v=200, a=random.randint(0, 360))
+            if self.timer % 200 == 0:
+                
+                self.flor(n=16, v=320, a=1*fase)
+                self.flor(n=16, v=300, a=2*fase)
+                self.flor(n=16, v=280, a=3*fase)
+                self.flor(n=16, v=260, a=4*fase)
+                # self.flor(n=16, v=240, a=5*fase)
+                print(f"Flor - Tempo: {self.timer}")
+            
+            if self.timer % 900 == 0:
+                self.flor(n=16, v=320, a=1*fase)
+                self.flor(n=16, v=300, a=2*fase)
+                self.flor(n=16, v=280, a=3*fase)
+                self.flor(n=16, v=260, a=4*fase)
+                self.flor(n=16, v=240, a=5*fase)
+
+                self.flor(n=16, v=220, a=-1*fase)
+                self.flor(n=16, v=200, a=-2*fase)
+                self.flor(n=16, v=180, a=-3*fase)
+                self.flor(n=16, v=160, a=-4*fase)
+                self.flor(n=16, v=140, a=-5*fase)
+                print(f"Flor - Tempo: {self.timer}")
+        
+        # if self.timer % 150 == 0:
+        #     self.flor(n=8,v=200)
+        #     print(f"Flor - Tempo: {self.timer}")
 
     def atirar(self):
         """

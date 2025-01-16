@@ -76,8 +76,13 @@ class Fase1(EstadoBase):
 
         # --------------------------------------------------------
         boss = Boss(gerenciador_objetos)
-        rota_pos = [ (128,96), (128,288), (384,288), (384,96)] #retangulo
-        rota_tempo = [ 200, 200, 200, 200]
+        boss.mudar_posicao((3 / 4) * conf.LARGURA_TELA , (1 / 8) * conf.ALTURA_TELA)
+        rota_pos = [ (128,96), (128,288), (384,288), (384,96)]
+        # rota_pos = [ (128,96), (128,288), (384,288), (384,96),
+        #             (233,34), (98,169), (278,350), (414,215), (384,96)] #retangulo
+        
+        rota_tempo =[ 199, 200, 199, 200] #alguns 199 porque ele tá atrasando movimento
+        # rota_tempo = [ 99, 99, 99, 99, 99,99,99,99,99]
         boss.definir_rota(rota_pos, rota_tempo)
         gerenciador_objetos.adicionar_inimigo(boss)
 
@@ -255,7 +260,6 @@ class Fase2(EstadoBase):
         # Atualizando a tela
         pygame.display.flip()
 
-# ---------------------------------------------------------------------------------------------------------
 class TelaGameOver(EstadoBase):
     def __init__(self, gerenciador):
         super().__init__(gerenciador)
@@ -270,7 +274,7 @@ class TelaGameOver(EstadoBase):
                     self.gerenciador.trocar_estado("fase1")
 
     def desenhar(self, tela):
-        tela.fill(cores.PRETO)
+        # tela.fill(())
         texto_game_over = self.fonte.render("Game Over", True, cores.VERMELHO)
         instrucao = pygame.font.SysFont("Arial", 24).render("Pressione R para reiniciar", True, cores.BRANCO)
         tela.blit(texto_game_over, (conf.LARGURA_TELA // 2 - texto_game_over.get_width() // 2, conf.ALTURA_TELA // 2 - 50))

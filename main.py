@@ -32,7 +32,7 @@ def main():
         gerenciador.desenhar(tela)
         clock.tick(conf.FPS)  # Controla o FPS da tela
     pygame.quit()
-
+    pass
 
 
 

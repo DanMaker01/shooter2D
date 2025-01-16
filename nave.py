@@ -51,13 +51,15 @@ class Nave(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         
         # MOVIMENTO (utilizando x_pos e y_pos para movimento suave)-----------
-        if keys[pygame.K_LEFT] and self.x_pos > 0:
+        # if keys[pygame.K_LEFT] and self.x_pos > 0:
+        if keys[pygame.K_LEFT] and self.hitbox.rect.x > 0:
             if self.focado:
                 self.x_pos -= self.velocidade_focado / 1000
             else:
                 self.x_pos -= self.velocidade / 1000
 
-        if keys[pygame.K_RIGHT] and self.x_pos < conf.LARGURA_TELA-self.rect.width:
+        # if keys[pygame.K_RIGHT] and self.x_pos < conf.LARGURA_TELA-self.rect.width:
+        if keys[pygame.K_RIGHT] and self.hitbox.rect.x < conf.LARGURA_TELA-self.hitbox.rect.width:
             if self.focado:
                 self.x_pos += self.velocidade_focado / 1000
             else:
@@ -66,7 +68,7 @@ class Nave(pygame.sprite.Sprite):
         # Atualiza o rect.x e rect.y com base na posição flutuante
         self.rect.x = int(self.x_pos)
         self.rect.y = int(self.y_pos)
-        # Atualiza a hitbox
+        # Atualiza a hitbox baseado na proporção
         self.hitbox.rect.x = self.rect.x + ( self.rect.width * (1-self.hitbox_escala) / 2)
         self.hitbox.rect.y = self.rect.y + ( self.rect.height * (1-self.hitbox_escala) / 2)
 
@@ -76,7 +78,7 @@ class Nave(pygame.sprite.Sprite):
                 #gera as 5 flores, cada uma com sua velocidade inicial
                 velocidades = [300, 400, 500, 580, 660]
                 for vel in velocidades:  # Distâncias das bombas
-                    self.bomba(velocidade=vel, fase=(vel/velocidades[-1])*360)
+                    self.bomba(velocidade=vel, fase=(vel/velocidades[-1])*360, qtd=72)
 
                 # Define o cooldown da bomba
                 self.tempo_recarga_bomba = self.tempo_recarga_bomba_max
@@ -91,7 +93,15 @@ class Nave(pygame.sprite.Sprite):
         if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]:
             self.focar()
         else:
-            self.desfocar()
+            if self.focado:
+                self.desfocar()
+                # self.tempo_recarga = 0
+                # self.atirar()
+                # self.tempo_recarga = self.tempo_recarga_max
+                # self.desfocar()
+            else:
+                pass
+            
 
         # Atualiza o tempo de recarga
         if self.tempo_recarga > 0:
