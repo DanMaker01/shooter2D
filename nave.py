@@ -15,7 +15,7 @@ class Nave(pygame.sprite.Sprite):
         
         # Definir o retangulo da nave
         self.rect = self.image.get_rect()
-        self.rect.x = conf.LARGURA_TELA // 2
+        self.rect.x = conf.LARGURA_TELA // 2 - self.rect.width // 2
         self.rect.y = conf.ALTURA_TELA - 100
         
         # Variáveis de posição flutuante (ações são feitas nas posições flutuantes, 

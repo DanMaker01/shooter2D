@@ -1,6 +1,6 @@
 import math
 import pygame
-import config as conf
+from config import *
 import cores
 
 from nave import Nave
@@ -43,11 +43,11 @@ class MenuInicial(EstadoBase):
         controles1 = pygame.font.SysFont("Arial", 24).render("Z - atirar", True, cores.BRANCO)
         controles2= pygame.font.SysFont("Arial", 24).render("SHIFT - focar", True, cores.BRANCO)
         controles3 = pygame.font.SysFont("Arial", 24).render("ESPAÇO (ou X) - bomba", True, cores.BRANCO)
-        tela.blit(titulo, (conf.LARGURA_TELA // 2 - titulo.get_width() // 2, conf.ALTURA_TELA // 2 - 200))
-        tela.blit(instrucao, (conf.LARGURA_TELA // 2 - instrucao.get_width() // 2, conf.ALTURA_TELA // 2 + 200))
-        tela.blit(controles1, ((conf.LARGURA_TELA // 2 - instrucao.get_width() // 2), conf.ALTURA_TELA // 2 ))
-        tela.blit(controles2, ((conf.LARGURA_TELA // 2 - instrucao.get_width() // 2), conf.ALTURA_TELA // 2 +30))
-        tela.blit(controles3, ((conf.LARGURA_TELA // 2 - instrucao.get_width() // 2), conf.ALTURA_TELA // 2 +60))
+        tela.blit(titulo, (LARGURA_TELA // 2 - titulo.get_width() // 2, ALTURA_TELA // 2 - 200))
+        tela.blit(instrucao, (LARGURA_TELA // 2 - instrucao.get_width() // 2, ALTURA_TELA // 2 + 200))
+        tela.blit(controles1, ((LARGURA_TELA // 2 - instrucao.get_width() // 2), ALTURA_TELA // 2 ))
+        tela.blit(controles2, ((LARGURA_TELA // 2 - instrucao.get_width() // 2), ALTURA_TELA // 2 +30))
+        tela.blit(controles3, ((LARGURA_TELA // 2 - instrucao.get_width() // 2), ALTURA_TELA // 2 +60))
         pygame.display.flip()
 
 
@@ -59,7 +59,7 @@ class Fase1(EstadoBase):
         self.gerenciador_objetos, self.jogador = self.reiniciar_jogo()
         self.pontuacao = 0
         self.fundo = pygame.image.load("sprites/galaxy.png").convert()
-        self.fundo = pygame.transform.scale(self.fundo, (conf.LARGURA_TELA, conf.ALTURA_TELA))
+        self.fundo = pygame.transform.scale(self.fundo, (LARGURA_TELA, ALTURA_TELA))
 
         
     def reiniciar_jogo(self):
@@ -76,22 +76,33 @@ class Fase1(EstadoBase):
 
         # --------------------------------------------------------
         boss = Boss(gerenciador_objetos)
-        boss.mudar_posicao((3 / 4) * conf.LARGURA_TELA , (1 / 8) * conf.ALTURA_TELA)
-        rota_pos = [ (128,96), (128,288), (384,288), (384,96)]
+        boss.mudar_posicao((1 / 2) * LARGURA_TELA -boss.rect.width/2 , (0/4)* ALTURA_TELA -boss.rect.height/2) #posicao inicial
+        # boss.mudar_posicao((3 / 4) * conf.LARGURA_TELA , (1 / 8) * conf.ALTURA_TELA) #posicao inicial
+        # --------------------------------------------------------
+        # Rota 
+        rota_entrada = [ (256,96),(256,96)]
+        rota_entrada_tempo =[ 200,800] #alguns 199 porque ele tá atrasando movimento
+
+        
         # rota_pos = [ (128,96), (128,288), (384,288), (384,96),
         #             (233,34), (98,169), (278,350), (414,215), (384,96)] #retangulo
-        
-        rota_tempo =[ 199, 200, 199, 200] #alguns 199 porque ele tá atrasando movimento
         # rota_tempo = [ 99, 99, 99, 99, 99,99,99,99,99]
-        boss.definir_rota(rota_pos, rota_tempo)
+        # boss.definir_rota(rota_pos, rota_tempo)
+        
+        
+        # adicionar (-boss.rect.width/2, -boss.rect.height/2) em cada elemento
+        rota_entrada_centralizada = [(x - boss.rect.width/2, y - boss.rect.height/2) for x, y in rota_entrada]
+
+        boss.definir_rota(rota_entrada_centralizada, rota_entrada_tempo)
+        # boss.definir_rota(rota_entrada, rota_entrada_tempo)
         gerenciador_objetos.adicionar_inimigo(boss)
 
 
         # --------------------------------------------------------
         # Adiciona inimigos iniciais
-        for i in range(3):
-            inimigo = Inimigo()
-            gerenciador_objetos.adicionar_inimigo(inimigo)
+        # for i in range(3):
+        #     inimigo = Inimigo()
+        #     gerenciador_objetos.adicionar_inimigo(inimigo)
 
         # --------------------------------------------------------
 
@@ -172,7 +183,7 @@ class Fase2(EstadoBase):
         self.gerenciador_objetos, self.jogador = self.reiniciar_jogo()
         self.pontuacao = 0
         self.fundo = pygame.image.load("sprites/galaxy.png").convert()
-        self.fundo = pygame.transform.scale(self.fundo, (conf.LARGURA_TELA, conf.ALTURA_TELA))
+        self.fundo = pygame.transform.scale(self.fundo, (LARGURA_TELA, ALTURA_TELA))
 
     def reiniciar_jogo(self):
         """
@@ -277,8 +288,8 @@ class TelaGameOver(EstadoBase):
         # tela.fill(())
         texto_game_over = self.fonte.render("Game Over", True, cores.VERMELHO)
         instrucao = pygame.font.SysFont("Arial", 24).render("Pressione R para reiniciar", True, cores.BRANCO)
-        tela.blit(texto_game_over, (conf.LARGURA_TELA // 2 - texto_game_over.get_width() // 2, conf.ALTURA_TELA // 2 - 50))
-        tela.blit(instrucao, (conf.LARGURA_TELA // 2 - instrucao.get_width() // 2, conf.ALTURA_TELA // 2 + 20))
+        tela.blit(texto_game_over, (LARGURA_TELA // 2 - texto_game_over.get_width() // 2, ALTURA_TELA // 2 - 50))
+        tela.blit(instrucao, (LARGURA_TELA // 2 - instrucao.get_width() // 2, ALTURA_TELA // 2 + 20))
         pygame.display.flip()
 
 

@@ -14,8 +14,8 @@ class Boss(Inimigo):
         self.image = pygame.image.load("sprites/boss.png").convert_alpha()
         
         # Define a posição inicial usando floats para precisão
-        self.x_pos = 0
-        self.y_pos = 0
+        self.x_pos = 0 # x
+        self.y_pos = 0 # y
         
         # Inicializa o rect do boss
         self.rect.x = round(self.x_pos)
@@ -46,6 +46,15 @@ class Boss(Inimigo):
         """
         Atualiza a posição do boss com base na rota e realiza eventos baseados no tempo.
         """
+        # ---------------
+        if self.timer == 1000 :
+            print("boss troca a estrategia :: self.timer = ", self.timer)
+            rota_pos = [ (128,96), (128,288), (384,288), (384,96), (256,96)]
+            rota_tempo =[ 100, 200, 199, 200, 100] #alguns 199 porque ele tá atrasando movimento
+            self.definir_rota(rota_pos, rota_tempo)
+        
+
+        # ---------------
         if self.rota.len_rota() > 0:  # Verifica se há itens na rota
             # print("update: self.timer = ", self.timer)
             if self.se_movendo_agora:
@@ -109,7 +118,7 @@ class Boss(Inimigo):
         #     print("_iniciar_movimento: self.timer = 200")
         # if self.timer == 201:
         #     print("_iniciar_movimento: self.timer = 201")
-        print("VAI INICIAR MOVIMENTO!! posicao atual:", posicao_atual, "posicao desejada:", posicao_desejada, "tempo_atual", self.timer, "tempo_desejado", tempo_desejado)
+        # print("VAI INICIAR MOVIMENTO!! posicao atual:", posicao_atual, "posicao desejada:", posicao_desejada, "tempo_atual", self.timer, "tempo_desejado", tempo_desejado)
 
         if tempo_desejado > 0:
             self.delta_x = (posicao_desejada[0] - posicao_atual[0]) / tempo_desejado
@@ -123,30 +132,30 @@ class Boss(Inimigo):
         """
         Executa eventos baseados no tempo.
         """
-        fase = 3
+        add_angulo_fase = 3
         if self.timer != 0:
 
             if self.timer % 200 == 0:
                 
-                self.flor(n=16, v=320, a=1*fase)
-                self.flor(n=16, v=300, a=2*fase)
-                self.flor(n=16, v=280, a=3*fase)
-                self.flor(n=16, v=260, a=4*fase)
-                # self.flor(n=16, v=240, a=5*fase)
+                self.flor(n=16, v=320, a=1*add_angulo_fase)
+                self.flor(n=16, v=300, a=2*add_angulo_fase)
+                self.flor(n=16, v=280, a=3*add_angulo_fase)
+                self.flor(n=16, v=260, a=4*add_angulo_fase)
+                # self.flor(n=16, v=240, a=5*add_angulo_fase)
                 print(f"Flor - Tempo: {self.timer}")
             
             if self.timer % 900 == 0:
-                self.flor(n=16, v=320, a=1*fase)
-                self.flor(n=16, v=300, a=2*fase)
-                self.flor(n=16, v=280, a=3*fase)
-                self.flor(n=16, v=260, a=4*fase)
-                self.flor(n=16, v=240, a=5*fase)
+                self.flor(n=16, v=320, a=1*add_angulo_fase)
+                self.flor(n=16, v=300, a=2*add_angulo_fase)
+                self.flor(n=16, v=280, a=3*add_angulo_fase)
+                self.flor(n=16, v=260, a=4*add_angulo_fase)
+                self.flor(n=16, v=240, a=5*add_angulo_fase)
 
-                self.flor(n=16, v=220, a=-1*fase)
-                self.flor(n=16, v=200, a=-2*fase)
-                self.flor(n=16, v=180, a=-3*fase)
-                self.flor(n=16, v=160, a=-4*fase)
-                self.flor(n=16, v=140, a=-5*fase)
+                self.flor(n=16, v=220, a=-1*add_angulo_fase)
+                self.flor(n=16, v=200, a=-2*add_angulo_fase)
+                self.flor(n=16, v=180, a=-3*add_angulo_fase)
+                self.flor(n=16, v=160, a=-4*add_angulo_fase)
+                self.flor(n=16, v=140, a=-5*add_angulo_fase)
                 print(f"Flor - Tempo: {self.timer}")
         
         # if self.timer % 150 == 0:

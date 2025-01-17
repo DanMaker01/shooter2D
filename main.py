@@ -29,6 +29,7 @@ def main():
         gerenciador.processar_eventos(eventos)
         gerenciador.atualizar()
         gerenciador.set_fps(clock.get_fps())  # Define o FPS no gerenciador
+        
         gerenciador.desenhar(tela)
         clock.tick(conf.FPS)  # Controla o FPS da tela
     pygame.quit()
