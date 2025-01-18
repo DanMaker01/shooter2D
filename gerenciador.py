@@ -60,11 +60,11 @@ class GerenciadorObjetos:
         status, pontos = self.verificar_colisao_tiros_inimigos()
         if status == "game_over":
             return status, pontos
-        
-        pontuacao += pontos
-        
         if status == "fase2":
             return status, pontos
+        
+        
+        pontuacao += pontos
 
         # Colisões: Tiros dos inimigos x Jogador
         status, pontos = self.verificar_colisao_jogador_com_tiros_inimigos()
@@ -97,10 +97,9 @@ class GerenciadorObjetos:
                     self.remover_objeto(inimigo)
                     pontuacao += 100
                     print("boss morreu!!")
-                    for tiro in self.tiros_inimigos:
+                    for tiro in self.tiros_inimigos: #apagar todos os tiros inimigos
                         self.remover_objeto(tiro)
-                    #remover todos os inimigos também
-                    for inimigo in self.inimigos:
+                    for inimigo in self.inimigos: #remover todos os inimigos também
                         self.remover_objeto(inimigo)
 
                     #mudar para fase2

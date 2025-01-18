@@ -21,24 +21,26 @@ class Boss(Inimigo):
         self.rect.x = round(self.x_pos)
         self.rect.y = round(self.y_pos)
 
-        self.velocidade = 1
+        self.velocidade = 1 # pra que?
+
         self.hp_max = 200
         self.hp = self.hp_max
 
-        # Gerenciador de entidades e inicialização do timer
+        # Gerenciador de entidades
         self.gerenciador = gerenciador
-        self.timer = 0
-
+        
         # Controle de rota e movimento
-        self.delta_x = 0
-        self.delta_y = 0
+        self.delta_x = 0 # talvez isso saia daqui e vá para o Gerenciador de Estados - Fase2
+        self.delta_y = 0 # talvez isso saia daqui e vá para o Gerenciador de Estados - Fase2 @@@@ MELHORAR
         self.se_movendo_agora = False
-        self.rota = Rota()
+        self.rota = Rota() # talvez nao precise, talvez seja melhor colocar no Gerenciador de Estados - Fase2
+        pass # não tem timer, timer é gerenciado pelo Gerenciador de Estados.
 
     def definir_rota(self, vetor_pos, vetor_tempo):
         """
         Define a rota do boss adicionando posições e tempos correspondentes.
         """
+        # self.rota = Rota()
         for pos, tempo in zip(vetor_pos, vetor_tempo):
             self.rota.rota_add(pos, tempo)
 
@@ -46,15 +48,7 @@ class Boss(Inimigo):
         """
         Atualiza a posição do boss com base na rota e realiza eventos baseados no tempo.
         """
-        # ---------------
-        if self.timer == 1000 :
-            print("boss troca a estrategia :: self.timer = ", self.timer)
-            rota_pos = [ (128,96), (128,288), (384,288), (384,96), (256,96)]
-            rota_tempo =[ 100, 200, 199, 200, 100] #alguns 199 porque ele tá atrasando movimento
-            self.definir_rota(rota_pos, rota_tempo)
         
-
-        # ---------------
         if self.rota.len_rota() > 0:  # Verifica se há itens na rota
             # print("update: self.timer = ", self.timer)
             if self.se_movendo_agora:
@@ -72,11 +66,11 @@ class Boss(Inimigo):
         self.hitbox.rect.x = self.rect.x
         self.hitbox.rect.y = self.rect.y
 
-        # Eventos baseados no tempo
-        self._executar_eventos_tempo()
+        # # Eventos baseados no tempo
+        # self._executar_eventos_tempo()
 
         # Incrementa o timer
-        self.timer += 1
+        # self.timer += 1
 
     def _continuar_movimento(self):
         """
@@ -88,13 +82,15 @@ class Boss(Inimigo):
         self.x_pos += self.delta_x
         self.y_pos += self.delta_y
 
-        # Verifica se o boss chegou ao destino
+        # Verifica se o boss chegou ao destino, se sim, faz proxima ação
         if abs(self.x_pos - posicao_desejada[0]) < 1 and abs(self.y_pos - posicao_desejada[1]) < 1:
+            # print("troca movimento, self.timter:", self.timer)
             self.x_pos, self.y_pos = posicao_desejada
             self.delta_x = 0
             self.delta_y = 0
             self.se_movendo_agora = False
             self.rota.rota_avancar_item()  # Avança para o próximo ponto
+            #atualiza posicao e hitbox
             self.rect.x = round(self.x_pos)
             self.rect.y = round(self.y_pos)
             self.hitbox.rect.x = self.rect.x
@@ -110,16 +106,6 @@ class Boss(Inimigo):
         posicao_desejada, tempo_desejado = self.rota.rota_get_item_atual()
         posicao_atual = (self.x_pos, self.y_pos)
         
-        # if self.timer == 198:
-        #     print("_iniciar_movimento: self.timer = 198")
-        # if self.timer == 199:
-        #     print("_iniciar_movimento: self.timer = 199")
-        # if self.timer == 200:
-        #     print("_iniciar_movimento: self.timer = 200")
-        # if self.timer == 201:
-        #     print("_iniciar_movimento: self.timer = 201")
-        # print("VAI INICIAR MOVIMENTO!! posicao atual:", posicao_atual, "posicao desejada:", posicao_desejada, "tempo_atual", self.timer, "tempo_desejado", tempo_desejado)
-
         if tempo_desejado > 0:
             self.delta_x = (posicao_desejada[0] - posicao_atual[0]) / tempo_desejado
             self.delta_y = (posicao_desejada[1] - posicao_atual[1]) / tempo_desejado
@@ -128,39 +114,8 @@ class Boss(Inimigo):
 
         self.se_movendo_agora = True
 
-    def _executar_eventos_tempo(self):
-        """
-        Executa eventos baseados no tempo.
-        """
-        add_angulo_fase = 3
-        if self.timer != 0:
-
-            if self.timer % 200 == 0:
-                
-                self.flor(n=16, v=320, a=1*add_angulo_fase)
-                self.flor(n=16, v=300, a=2*add_angulo_fase)
-                self.flor(n=16, v=280, a=3*add_angulo_fase)
-                self.flor(n=16, v=260, a=4*add_angulo_fase)
-                # self.flor(n=16, v=240, a=5*add_angulo_fase)
-                print(f"Flor - Tempo: {self.timer}")
-            
-            if self.timer % 900 == 0:
-                self.flor(n=16, v=320, a=1*add_angulo_fase)
-                self.flor(n=16, v=300, a=2*add_angulo_fase)
-                self.flor(n=16, v=280, a=3*add_angulo_fase)
-                self.flor(n=16, v=260, a=4*add_angulo_fase)
-                self.flor(n=16, v=240, a=5*add_angulo_fase)
-
-                self.flor(n=16, v=220, a=-1*add_angulo_fase)
-                self.flor(n=16, v=200, a=-2*add_angulo_fase)
-                self.flor(n=16, v=180, a=-3*add_angulo_fase)
-                self.flor(n=16, v=160, a=-4*add_angulo_fase)
-                self.flor(n=16, v=140, a=-5*add_angulo_fase)
-                print(f"Flor - Tempo: {self.timer}")
-        
-        # if self.timer % 150 == 0:
-        #     self.flor(n=8,v=200)
-        #     print(f"Flor - Tempo: {self.timer}")
+    # def _executar_eventos_tempo(self):
+    #     pass
 
     def atirar(self):
         """
@@ -173,6 +128,7 @@ class Boss(Inimigo):
         """
         Dispara projéteis em padrão circular.
         """
+        
         for i in range(n):
             angulo = (r / n) * i + a
             tiro = TiroInimigo(self.rect.centerx, self.rect.bottom, v, angulo)

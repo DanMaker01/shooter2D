@@ -3,7 +3,7 @@
 class Rota:
     def __init__(self):
       
-        print("iniciou classe rota")
+        # print("iniciou classe rota")
         self.posicao = []
         self.tempo = []
         self.indice = 0
